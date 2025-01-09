@@ -1,0 +1,352 @@
+/* Ogólny styl strony */
+body {
+    margin: 0;
+    padding: 0;
+    /*font-family: Garamond, serif;*/
+    font-family: Candara, sans-serif;
+    background-color: #252525; /* Kolor tła */
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Pasek na górze */
+#top-bar {
+    background: rgba(25, 25, 25, 0.7); /* Przezroczysty pasek */
+    height: 14%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(100%); /* Zachowanie marginesów */
+    /*margin-left: 0.75cm;*/
+    /*margin-right: 0.75cm;*/
+    z-index: 1000; /* Pasek musi być nad mapą */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Cień dla widoczności */
+}
+
+/* Logo */
+#logo {
+    max-height: 80%; /* Dostosowanie rozmiaru logo */
+    width: auto;
+}
+
+/* Kontener mapy */
+#map {
+    height: calc(100%); /* Dostosowanie wysokości mapy */
+    width: calc(100%); /* Dodanie marginesów */
+    /*margin-left: 0.75cm;*/
+    /*margin-right: 10cm;*/
+    border-radius: 10px; /* Zaokrąglone rogi */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7); /* Cień */
+    overflow: hidden;
+}
+
+/* Kontener formularza */
+#form-container {
+    position: absolute;
+    top: 21%;
+    left: 8%;
+    background: rgba(25, 25, 25, 0.7); /* Lekko przezroczyste tło */
+    padding: 15px;
+    border-radius: 10px; /* Zaokrąglone rogi */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    max-width: 330px; /* Ustal szerokość formularza */
+    width: 20%; /* Wartość w procentach */
+}
+
+/* Formularz */
+form label, form button {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+    color: white; /* Tekst w formularzu w kolorze białym */
+    font-size: 1.2rem;
+}
+
+form button {
+    background-color: #F5A342;
+    color: black;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: Garamond, serif;
+    font-size: 1.2rem;
+
+}
+
+form button:hover {
+    background-color: #F9B166;
+}
+
+/* Wyróżniony pierwszy napis */
+form label:first-of-type {
+    color: #F5A342; /* Pomarańczowy kolor */
+    font-size: 1.45rem; /* Powiększenie tekstu */
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 18px;
+}
+
+/* Pole input dla dystansu */
+form input {
+    display: block; /* Ustawienie bloku dla lepszego zarządzania marginesami */
+    max-width: 30%; /* Skrócenie szerokości */
+    width: auto;
+    padding: 5px 10px;
+    border-radius: 10px; /* Zaokrąglone rogi */
+    background-color: #ddd; /* Szare tło */
+    color: black; /* Czarny tekst w polu input */
+    border: none; /* Brak obramowania */
+    margin-bottom: 18px;
+    margin-left: auto; /* Automatyczne wyśrodkowanie */
+    margin-right: auto; /* Automatyczne wyśrodkowanie */
+    text-align: center; /* Wyśrodkowanie tekstu wewnątrz pola input */
+
+}
+
+/* Styl dla kontenerów opcji */
+#type-filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 10px;
+    justify-content: center; /* Wyśrodkowanie poziome */
+    align-items: center; /* Wyśrodkowanie pionowe */
+}
+
+/* Opcje filtrów */
+.filter-option {
+    background-color: #333;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+}
+
+/* Pierwszy element osobno */
+.filter-option:first-of-type {
+    flex-basis: 48%; /* Zajmuje całą szerokość */
+    text-align: center; /* Wyśrodkowanie tekstu */
+}
+
+/* Hover efekt */
+.filter-option:hover {
+    background-color: #F9B166; /* Kolor hover */
+}
+
+/* Wybrany element */
+.filter-option.selected {
+    background-color: #F9B166; /* Kolor dla wybranej opcji */
+    color: black;
+    font-weight: bold;
+}
+
+/* Styl dla tekstu 'Click on the map' */
+#start-coords {
+    color: white; /* Biały tekst */
+    text-align: left; /* Wyśrodkowanie tekstu */
+    margin-top: 18px;
+    font-size: 1.2rem;
+    margin-bottom: 18px;
+}
+/* Styl dla popupów */
+.popup-container {
+    background-color: #333;
+    border-radius: 10px;
+    padding: 12px;
+    font-family: "Gill Sans", serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Wyśrodkowanie poziome */
+    justify-content: center; /* Wyśrodkowanie pionowe */
+    text-align: center;
+}
+
+.popup-name {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #F5A342;
+    margin-bottom: 10px;
+    text-align: center;
+
+}
+
+.popup-image {
+    max-width: 100%;
+    max-height: 100%;
+    width: 230px;
+    height: 185px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #F5A342; /* Cienka pomarańczowa obramówka */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Lekki cień */
+}
+
+.popup-description {
+    color: #fff;
+    margin-bottom: 5px;
+    font-size: 1rem;
+    text-align: justify;
+    width: 260px;
+}
+
+/* Ustawienia dla kontenera popupów w Leaflet */
+.custom-popup .leaflet-popup-content-wrapper {
+    background-color: #333; /* Szare tło */
+    border-radius: 10px; /* Zaokrąglone rogi */
+    font-family: "Gill Sans", serif;
+    padding: 15px;
+    border: 1px solid #F5A342; /* Cienka pomarańczowa obramówka */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5); /* Leunięcie cieni */
+}
+
+/* Usuń wskazówki (tip) */
+.custom-popup .leaflet-popup-tip {
+    background-color: #333; /* Dopasowanie koloru do tła popupu */
+    border: none; /* Usuń dodatkowe obramowania */
+
+}
+
+/* Ustawienia dla ikon Leaflet */
+.leaflet-div-icon {
+    background: transparent !important; /* Przezroczyste tło ikon */
+    border: none !important; /* Usunięcie domyślnej obwódki */
+}
+
+.leaflet-popup-content-wrapper {
+    background-color: #333 !important; /* Szare tło */
+    border: 1px solid #F5A342; /* Pomarańczowa obramówka */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5); /* Usunięcie cieni */
+}
+
+/* Usuń wskazówki (tip) */
+.leaflet-popup-tip {
+    background-color: #333 !important; /* Dopasowanie koloru do tła popupu */
+    border: none !important; /* Usuń dodatkowe obramowania */
+}
+
+
+#elevations-container {
+    display: flex;
+    flex-direction: column;
+    width: 25%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto; /* Dodaj przewijanie, jeśli jest dużo profili */
+    z-index: 1000;
+}
+
+.elevation-item {
+    display: flex;
+    flex-direction: row;
+    /*margin-bottom: 10px;*/
+}
+
+.elevation-profile {
+    width: 75%;
+}
+
+.elevation-info {
+    width: 25%;
+    padding-left: 5px;
+    color: #ffffff;
+    background: rgba(51, 51, 51, 0.8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px; /* Odstęp między liniami tekstu */
+    border-left: 5px solid rgba(51, 51, 51, 1);
+}
+
+.route {
+    font-size: 19px;
+    text-align: center;
+    justify-content: center;
+    margin-bottom: 5px;
+}
+
+.distance {
+    font-size: 13px;
+    text-align: center;
+}
+
+.number {
+    font-size: 20px;
+}
+
+/* Uniwersalny ekran ładowania */
+.loader-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-size: 1.5em;
+    z-index: 1000;
+    display: none; /* Domyślnie ukryty */
+}
+
+/* Loader dla profili wysokościowych tylko po prawej stronie */
+#elevation-loader {
+    left: 75%; /* Odstęp od lewej strony = 80% szerokości */
+    width: 25%; /* Szerokość 20% strony */
+    background: rgba(0, 0, 0, 0.7); /* Ciemniejsze tło */
+    font-size: 1em; /* Mniejszy font */
+}
+
+.loader-spinner {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #F5A342;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.elevation-item.blurred {
+    filter: blur(2px);
+    opacity: 0.95;
+}
+
+.elevation-item.highlighted {
+    filter: none;
+    opacity: 1;
+}
+
+/* Klasa dla tras, które nie są aktywne */
+.blurred-route {
+    filter: blur(3px); /* Efekt rozmycia */
+    opacity: 0.4;      /* Lekka przeźroczystość */
+    transition: filter 0.3s, opacity 0.3s; /* Płynne przejście efektu */
+}
+
+/* Domyślna stylizacja trasy */
+.highlighted-route {
+    filter: none; /* Usuń rozmycie */
+    opacity: 1;   /* Pełna widoczność */
+}
+
+

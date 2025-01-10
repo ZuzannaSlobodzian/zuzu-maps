@@ -5,9 +5,11 @@ body {
     /*font-family: Garamond, serif;*/
     font-family: Candara, sans-serif;
     background-color: #252525; /* Kolor tła */
-    height: 100vh;
+    height: 110vh;
     display: flex;
     flex-direction: column;
+    overflow: hidden; /* Ukryj nadmiar */
+
 }
 
 /* Pasek na górze */
@@ -35,11 +37,11 @@ body {
 
 /* Kontener mapy */
 #map {
-    height: calc(100%); /* Dostosowanie wysokości mapy */
+    height: 100%; /* Dostosowanie wysokości mapy */
     width: calc(100%); /* Dodanie marginesów */
     /*margin-left: 0.75cm;*/
     /*margin-right: 10cm;*/
-    border-radius: 10px; /* Zaokrąglone rogi */
+    /*border-radius: 10px; !* Zaokrąglone rogi *!*/
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7); /* Cień */
     overflow: hidden;
 }
@@ -47,8 +49,9 @@ body {
 /* Kontener formularza */
 #form-container {
     position: absolute;
-    top: 21%;
+    bottom: 5%;
     left: 8%;
+    height: 70%;
     background: rgba(25, 25, 25, 0.7); /* Lekko przezroczyste tło */
     padding: 15px;
     border-radius: 10px; /* Zaokrąglone rogi */
@@ -56,6 +59,67 @@ body {
     z-index: 1000;
     max-width: 330px; /* Ustal szerokość formularza */
     width: 20%; /* Wartość w procentach */
+    overflow: hidden;
+    transition: height 2s ease-in-out;
+    transform-origin: bottom;
+    display: flex; /* Ustawienie elastycznego układu */
+    flex-direction: column; /* Układ elementów w kolumnie */
+    justify-content: flex-start; /* Elementy wyrównane do góry */
+}
+
+#form-container.collapsed {
+    transition: height 1s ease-in-out;
+    height: 4%; /* Zmniejszenie wysokości */
+    width: 20%; /* Zajmuje całą szerokość ekranu */
+    bottom: 5%; /* Przesunięcie na dół strony */
+    left: 8%;
+    position: fixed; /* Pasek na dole */
+    overflow: hidden; /* Ukrywanie zawartości */
+    z-index: 1000;
+    display: flex; /* Wyśrodkowanie tekstu */
+    justify-content: center;
+    align-items: center;
+    background: #333; /* Tło paska */
+    color: #F5A342; /* Kolor tekstu */
+    font-size: 1.2rem; /* Rozmiar tekstu */
+    font-weight: bold;
+    cursor: pointer; /* Kursor wskazujący */
+}
+
+
+.hidden {
+    display: none; /* Całkowicie ukryj element */
+}
+
+/*#expand-btn:hover {*/
+/*    background-color: #F9B166;*/
+/*}*/
+
+#expand-btn {
+    background: #333; /* Tło paska */
+    color: #F5A342; /* Kolor tekstu */
+    border: none;
+    font-size: 1.2rem;
+    /*font-weight: bold;*/
+    border-radius: 10px; /* Dopasowanie do zaokrąglonych rogów formularza */
+    width: 100%; /* Dopasowanie szerokości do formularza */
+    height: 100%; /* Dopasowanie wysokości do formularza */
+    text-align: center;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    font-family: Candara, sans-serif;
+}
+
+#expand-btn:hover{
+    color: #ffffff; /* Kolor tekstu */
+}
+#expand-btn.hidden {
+    display: flex;
+    opacity: 0; /* Ukryj przycisk stopniowo */
+    pointer-events: none; /* Zablokuj interakcję */
 }
 
 /* Formularz */
@@ -68,7 +132,7 @@ form label, form button {
 }
 
 form button {
-    background-color: #F5A342;
+    background-color: #F9B166;
     color: black;
     border: none;
     padding: 10px;
@@ -80,7 +144,13 @@ form button {
 }
 
 form button:hover {
-    background-color: #F9B166;
+    background-color: #F5A342;
+}
+
+form button.clicked{
+    background-color: #F5A342;
+    cursor: default; /* Zmiana kursora na domyślny */
+
 }
 
 /* Wyróżniony pierwszy napis */
@@ -328,25 +398,12 @@ form input {
 
 .elevation-item.blurred {
     filter: blur(2px);
-    opacity: 0.95;
+    opacity: 0.75;
+    transition: filter 0.3s, opacity 0.3s;
 }
 
 .elevation-item.highlighted {
     filter: none;
     opacity: 1;
+    transition: filter 0.3s, opacity 0.3s;
 }
-
-/* Klasa dla tras, które nie są aktywne */
-.blurred-route {
-    filter: blur(3px); /* Efekt rozmycia */
-    opacity: 0.4;      /* Lekka przeźroczystość */
-    transition: filter 0.3s, opacity 0.3s; /* Płynne przejście efektu */
-}
-
-/* Domyślna stylizacja trasy */
-.highlighted-route {
-    filter: none; /* Usuń rozmycie */
-    opacity: 1;   /* Pełna widoczność */
-}
-
-

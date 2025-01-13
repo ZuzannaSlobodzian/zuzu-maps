@@ -1,10 +1,27 @@
 
-const map = L.map('map').setView([50.061485, 19.937978], 13); // Kraków
+const map = L.map('map').setView([50.04410, 19.95824], 12); // Kraków
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
+
+let krakow_boundary = null;
+fetch("/static/boundary/krakow_boundary.json")
+    .then(response => response.json())
+      .then(data => {
+        // Dodaj warstwę GeoJSON do mapy
+        krakow_boundary = L.geoJSON(data, {
+          style: {
+            color: '#696880',  // Kolor linii
+            weight: 4,         // Grubość linii
+            fillOpacity: 0     // Wypełnienie przezroczyste
+          }
+        }).addTo(map);
+
+        // Dopasowanie widoku mapy do granic Krakowa
+        // map.fitBounds(krakow_boundary.getBounds());
+      });
 
 let startCoords = null;
 let selectedFilters = [];
@@ -15,7 +32,9 @@ let routes = [];
 let borders = []
 let isCancelled = false; // Flaga przerwania operacji
 let abortController = null; // Globalny kontroler anulowania
-
+let coordsFlag = false
+let distanceFlag = false
+let optionsFlag = false
 
 function showLoader(loaderId) {
     document.getElementById(loaderId).style.display = 'flex';
@@ -124,29 +143,116 @@ function resetAllRoutesAndProfiles() {
 const confirmButton = document.getElementById("confirm-btn");
 const formContainer = document.getElementById("form-container");
 const expandButton = document.getElementById("expand-btn");
+const tripDistance = document.getElementById("trip_distance");
+const filterOptions = document.querySelectorAll(".filter-option");
+const filterContainer = document.getElementById("type-filter-container");
+const startCoordsError = document.getElementById("start-coords-error");
+const tripDistanceError = document.getElementById("trip-distance-error");
+const typeFilterError = document.getElementById("type-filter-error");
 
+
+function isAnyOptionSelected() {
+    for (let option of filterOptions) {
+        if (option.classList.contains("selected")) {
+            return true;
+        }
+    }
+    return false;
+}
+
+const errorSpanOptions = document.getElementById("error-message-options");
+
+function hideConfirmButton(){
+    if(!confirmButton.classList.contains("hidden")){
+        confirmButton.classList.add("hidden");
+    }
+}
+
+function showConfirmButton(){
+    if(confirmButton.classList.contains("hidden")){
+        confirmButton.classList.remove("hidden");
+    }
+}
 // Obsługa przycisku
 confirmButton.addEventListener("click", function () {
 
-    const trip_distance = document.getElementById("trip_distance").value;
+    if (!isAnyOptionSelected()) {
+        typeFilterError.textContent = "wybierz przynajmniej jedną kategorię";
+        typeFilterError.style.visibility = "visible";
 
-    loadRoute(trip_distance, selectedFilters);
+    }else{
+        optionsFlag = true;
+        typeFilterError.textContent = "";
+        typeFilterError.style.visibility = "hidden";
+    }
+
+    if(!distanceFlag){
+        tripDistanceError.textContent = "podaj dystans wycieczki";
+        tripDistanceError.style.visibility = "visible";
+    }
+
+    if(!coordsFlag){
+        startCoordsError.textContent = "wybierz punkt startowy";
+        startCoordsError.style.visibility = "visible"
+    }
+
+    if(!coordsFlag || !distanceFlag || !optionsFlag){
+
+        return;
+    }else {
+        tripDistanceError.textContent = "";
+        tripDistanceError.style.visibility = "hidden";
+        startCoordsError.textContent = "";
+        startCoordsError.style.visibility = "hidden";        coordsFlag = false;
+        distanceFlag = false;
+        optionsFlag = false;
+    }
+
+    const trip_distance = document.getElementById("trip_distance").value;
+    // formContainer.style.height = "75%";
 
     formContainer.classList.add("collapsed"); // Dodaj klasę collapsed
-    formContainer.style.height = "4%";
+    formContainer.style.height = "8%";
     // document.getElementById("route-form").classList.add("hidden"); // Ukrywamy formularz
     // expandButton.classList.remove("hidden"); // Pokazujemy przycisk
 
     setTimeout(() => {
         document.getElementById("route-form").classList.add("hidden"); // Ukryj formularz
         expandButton.classList.remove("hidden"); // Pokaż przycisk
-    }, 1000); // Czas dopasowany do `transition` formularza
+    }, 1300); // Czas dopasowany do `transition` formularza
+
+    loadRoute(trip_distance, selectedFilters);
+
+});
+
+
+tripDistance.addEventListener("blur", function (e) {
+   const input = parseInt(e.target.value, 10); // Zamień na liczbę całkowitą
+
+    if (input < 5) {
+            tripDistanceError.textContent = "dystans musi być dłuższy niż 5 km";
+            tripDistanceError.style.visibility = "visible";
+            distanceFlag = false;
+    } else if (input > 100) {
+            tripDistanceError.textContent = "dystans musi być krótszy niż 100 km";
+            tripDistanceError.style.visibility = "visible";
+            distanceFlag = false;
+        // hideConfirmButton()
+    }else if(!tripDistance.value.trim()){
+                    distanceFlag = false;
+
+    }else{
+            tripDistanceError.textContent = "";
+            tripDistanceError.style.visibility = "hidden";
+            distanceFlag = true;
+        }
+
 });
 
 expandButton.addEventListener("click", function () {
     expandButton.classList.add("hidden"); // Ukrywamy przycisk
     formContainer.classList.remove("collapsed"); // Usuwamy klasę collapsed
-    formContainer.style.height = "70%"; // Przywracamy pełną wysokość
+    formContainer.style.height = "80%"; // Przywracamy pełną wysokość
 
     isCancelled = true;
 
@@ -177,6 +283,40 @@ expandButton.addEventListener("click", function () {
     isCancelled = false;
 });
 
+function isPointInPolygon(point, polygon) {
+    let inside = false;
+    const [x, y] = point;
+
+    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+        const xi = polygon[i].lat, yi = polygon[i].lng;
+        const xj = polygon[j].lat, yj = polygon[j].lng;
+
+        const intersect = ((yi > y) !== (yj > y)) &&
+            (x < ((xj - xi) * (y - yi)) / (yj - yi) + xi);
+        if (intersect) inside = !inside;
+    }
+
+    return inside;
+}
+
+function isPointInsideKrakow(point, geoJsonLayer) {
+    const latLng = [point.lat, point.lng]; // Punkt w formacie [lat, lng]
+    let isInside = false;
+
+    // Iteracja przez wszystkie warstwy w geoJsonLayer
+    geoJsonLayer.eachLayer(function (layer) {
+        // Pobranie współrzędnych wielokąta
+        const polygon = layer.getLatLngs();
+
+        // Sprawdzenie, czy punkt jest wewnątrz wielokąta
+        if (isPointInPolygon(latLng, polygon[0])) {
+            isInside = true;
+        }
+    });
+
+    return isInside;
+}
+
 // Obsługa kliknięcia na mapie
 map.on('click', function (e) {
 
@@ -185,6 +325,24 @@ map.on('click', function (e) {
         return; // Blokowanie dalszego działania
     }
     startCoords = e.latlng;
+
+    if (!isPointInsideKrakow(startCoords, krakow_boundary)) {
+        startCoordsError.textContent = "punkt nie jest w granicach Krakowa";
+        startCoordsError.style.visibility = "visible";
+        coordsFlag = false;
+        document.getElementById("start-coords").innerHTML = `
+       <p> 1. Kliknij na mapę by wybrać punkt startowy:</p>
+    `;
+        if (lastMarker) {
+            map.removeLayer(lastMarker);
+        }
+
+        return;
+    }else{
+        coordsFlag = true;
+        startCoordsError.textContent = "";
+        startCoordsError.style.visibility = "hidden";
+    }
 
     if (lastMarker) {
         map.removeLayer(lastMarker);
@@ -197,6 +355,7 @@ map.on('click', function (e) {
             ${startCoords.lat.toFixed(5)}, ${startCoords.lng.toFixed(5)}
         </span>
     `;
+
 });
 
 
@@ -210,7 +369,10 @@ document.querySelectorAll('.filter-option').forEach(option => {
         } else {
             selectedFilters.push(type);
             this.classList.add('selected');
+            typeFilterError.textContent = "";
+            typeFilterError.style.visibility = "hidden";
         }
+
     });
 });
 
@@ -254,14 +416,18 @@ async function loadRoute(trip_distance, typeFilter) {
 
     // Budowanie adresu URL do API z parametrami
 
-    const apiUrl = `trip?start_lat=${startCoords.lat}&start_lng=${startCoords.lng}&trip_distance=${trip_distance}&type_filter=${typeFilter.join(',')}`;
-    const response = await fetch(apiUrl);
+    try {
+        const apiUrl = `trip?start_lat=${startCoords.lat}&start_lng=${startCoords.lng}&trip_distance=${trip_distance}&type_filter=${typeFilter.join(',')}`;
+        const response = await fetch(apiUrl);
+    } catch (error){
+        hideLoader('route-loader');
+        console.error("Błąd podczas pobierania danych:", error.message);
+        alert(`Wystąpił błąd: ${error.message}`);
+    }
+
     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
-    // const response = await fetch(`/static/mock.json?v=${new Date().getTime()}`);
-    //
-    // // const response = await fetch('/static/mock.json');
-    // if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+
     const data = await response.json();
     const profileHeight = Math.max(100, window.innerHeight / data.points.length); // Dynamiczna wysokość
 

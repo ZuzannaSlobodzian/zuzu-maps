@@ -12,9 +12,9 @@ from asgiref.sync import sync_to_async
 # views.py
 from django.shortcuts import render
 
+
 def website_view(request):
     return render(request, 'website.html')  # Zwróć plik website.html
-
 
 
 class TripView(APIView):
@@ -99,7 +99,6 @@ class TripView(APIView):
         #     [lat, lng, elevation] for (lat, lng), elevation in zip(coordinates, elevations)
         # ]
 
-
         # return coordinates_with_elevation
 
         return coordinates
@@ -114,11 +113,11 @@ class TripView(APIView):
 
         print(route_json_path)
         for file_name in os.listdir(route_json_path):
-            if file_name.endswith('.json'):
+            if file_name.endswith('.boundary'):
                 with open(os.path.join(route_json_path, file_name), 'r', encoding='utf-8') as json_file:
                     data = json.load(json_file)
 
-                    distances_list.append(round((data['paths'][0]['distance']/1000), 2))
+                    distances_list.append(round((data['paths'][0]['distance'] / 1000), 2))
                     # road_list = self.calculate_road_class_proportions(data)
                     # print(road_list)
                     # Zakładamy, że dane zawierają klucz "polyline"
@@ -129,9 +128,9 @@ class TripView(APIView):
                         decoded_points = self.decode_polyline(encoded_polyline)
                         all_points.append(decoded_points)
         return all_points, distances_list
+
     def add_elevation(self, points):
         updated_points = []
-
 
         for route in points:
             # Pobierz tylko współrzędne [lat, lng] dla każdej trasy
@@ -151,37 +150,48 @@ class TripView(APIView):
         return updated_points
 
     def get(self, request):
-        # Pobranie parametrów z zapytania
-        start_lat = request.query_params.get('start_lat')
-        start_lng = request.query_params.get('start_lng')
-        trip_distance = request.query_params.get('trip_distance')
-        place_types = request.query_params.get('type_filter', '').split(',')
+        try:
+            # Pobranie parametrów z zapytania
+            start_lat = request.query_params.get('start_lat')
+            start_lng = request.query_params.get('start_lng')
+            trip_distance = request.query_params.get('trip_distance')
+            place_types = request.query_params.get('type_filter', '').split(',')
 
-        if not all([start_lat, start_lng, trip_distance]):
-            return Response({"error": "Brak wymaganych parametrów"}, status=status.HTTP_400_BAD_REQUEST)
+            print(place_types)
 
-        # Konwersja parametrów do odpowiednich typów
-        start_lat = float(start_lat)
-        start_lng = float(start_lng)
-        trip_distance = float(trip_distance)
+            if "all" in place_types:
+                place_types = ["all"]
 
-        # Inicjalizacja serwisu TripService
-        trip_service = RouteService(start_lat, start_lng, trip_distance, place_types)
+            print(place_types)
 
-        # Generowanie sekwencji trasy
-        all_place_points = trip_service.generate_trip_sequence()
+            # nie potrzebuje tego bo zalatwiam to w formularzu
+            # if not all([start_lat, start_lng, trip_distance]):
+            #     return Response({"error": "Brak wymaganych parametrów"}, status=status.HTTP_400_BAD_REQUEST)
 
-        all_points, distance_list = self.recalculate_json()
+            # Konwersja parametrów do odpowiednich typów
+            start_lat = float(start_lat)
+            start_lng = float(start_lng)
+            trip_distance = int(trip_distance)
 
-        path_route_json = f'zuzu_maps\\route_jsons\\'
-        for file_name in os.listdir(path_route_json):
-            file_path = os.path.join(path_route_json, file_name)
-            os.remove(file_path)
+            # Inicjalizacja serwisu TripService
+            trip_service = RouteService(start_lat, start_lng, trip_distance, place_types)
 
-        # with open(f'zuzu_maps\\static\\mock.json', 'w', encoding='utf-8') as f:
-        #     json.dump({"points": all_points, "places": all_place_points, "distances": distance_list}, f, ensure_ascii=False, indent=4)
-        # # Zwracanie punktów jako JSON
-        return Response({"points": all_points, "places": all_place_points, "distances": distance_list}, status=status.HTTP_200_OK)
+            # Generowanie sekwencji trasy
+            all_place_points = trip_service.generate_trip_sequence()
+
+            all_points, distance_list = self.recalculate_json()
+
+            path_route_json = f'zuzu_maps\\route_jsons\\'
+            for file_name in os.listdir(path_route_json):
+                file_path = os.path.join(path_route_json, file_name)
+                os.remove(file_path)
+
+            return Response({"points": all_points, "places": all_place_points, "distances": distance_list},
+                            status=status.HTTP_200_OK)
+
+        except Exception as e:
+            # Zwróć komunikat błędu do klienta
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
         json_data = request.data
@@ -195,8 +205,8 @@ class TripView(APIView):
 
         json_data['points'] = all_points
         # Zapisz wyniki
-        # with open(f'zuzu_maps\\static\\mock.json', 'w', encoding='utf-8') as f:
-        #     json.dump({"points": all_points, "distances": distance_list}, f, ensure_ascii=False, indent=4)
+        # with open(f'zuzu_maps\\static\\mock.boundary', 'w', encoding='utf-8') as f:
+        #     boundary.dump({"points": all_points, "distances": distance_list}, f, ensure_ascii=False, indent=4)
 
         return JsonResponse({
             "points": json_data['points'],

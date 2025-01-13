@@ -29,6 +29,8 @@ class RouteService:
                 if "all" in self.place_types or row.type in self.place_types:
                     self.close_points_list.append(row)
 
+        if not self.close_points_list:
+            raise Exception("Brak dostatecznej ilości punktów z tej kategorii w podanym zasięgu.")
 
     def calculate_points_to_json(self):
         points = [

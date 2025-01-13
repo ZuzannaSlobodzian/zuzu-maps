@@ -1,11 +1,18 @@
 /* Ogólny styl strony */
-body {
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+body, html {
     margin: 0;
     padding: 0;
     /*font-family: Garamond, serif;*/
     font-family: Candara, sans-serif;
     background-color: #252525; /* Kolor tła */
-    height: 110vh;
+    height: 105%;
     display: flex;
     flex-direction: column;
     overflow: hidden; /* Ukryj nadmiar */
@@ -42,36 +49,63 @@ body {
     /*margin-left: 0.75cm;*/
     /*margin-right: 10cm;*/
     /*border-radius: 10px; !* Zaokrąglone rogi *!*/
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7); /* Cień */
+    /*box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7); !* Cień *!*/
     overflow: hidden;
 }
+
+/*form {*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*}*/
 
 /* Kontener formularza */
 #form-container {
     position: absolute;
-    bottom: 5%;
+    bottom: 3%;
     left: 8%;
-    height: 70%;
+    height: 80%;
+    /*height: auto;*/
     background: rgba(25, 25, 25, 0.7); /* Lekko przezroczyste tło */
-    padding: 15px;
+    padding: 0 15px 0 15px;
     border-radius: 10px; /* Zaokrąglone rogi */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
     z-index: 1000;
     max-width: 330px; /* Ustal szerokość formularza */
-    width: 20%; /* Wartość w procentach */
+    width: 23%; /* Wartość w procentach */
     overflow: hidden;
-    transition: height 2s ease-in-out;
+    /*transition: height 1.5s ease-in-out;*/
     transform-origin: bottom;
     display: flex; /* Ustawienie elastycznego układu */
     flex-direction: column; /* Układ elementów w kolumnie */
     justify-content: flex-start; /* Elementy wyrównane do góry */
+    transition: height 1.5s ease-in-out;
+
 }
 
+.error-placeholder {
+    margin-top: 5px;
+    height: 1.5rem; /* Wysokość jednej linii tekstu */
+    font-size: 1rem; /* Rozmiar tekstu */
+    color: #EA3C53;
+    text-align: center; /* Wyśrodkowanie tekstu */
+    visibility: hidden; /* Ukryte na początku */
+    font-weight: bold;
+    text-shadow:
+            0 0 5px rgba(0, 0, 0, 0.8),
+            0 0 10px rgba(0, 0, 0, 0.6),
+            0 0 15px rgba(0, 0, 0, 0.4);
+}
+
+/*#form-container.error {*/
+/*    height: 80%; !* Zmniejszenie wysokości *!*/
+/*    bottom: 2%; !* Przesunięcie na dół strony *!*/
+/*}*/
+
 #form-container.collapsed {
-    transition: height 1s ease-in-out;
-    height: 4%; /* Zmniejszenie wysokości */
-    width: 20%; /* Zajmuje całą szerokość ekranu */
-    bottom: 5%; /* Przesunięcie na dół strony */
+    transition: height 1.5s ease-in-out;
+    height: 8%; /* Zmniejszenie wysokości */
+    width: 23%; /* Zajmuje całą szerokość ekranu */
+    bottom: 3%; /* Przesunięcie na dół strony */
     left: 8%;
     position: fixed; /* Pasek na dole */
     overflow: hidden; /* Ukrywanie zawartości */
@@ -87,16 +121,9 @@ body {
 }
 
 
-.hidden {
-    display: none; /* Całkowicie ukryj element */
-}
-
-/*#expand-btn:hover {*/
-/*    background-color: #F9B166;*/
-/*}*/
-
 #expand-btn {
-    background: #333; /* Tło paska */
+    position: absolute;
+    background: #333333; /* Tło paska */
     color: #F5A342; /* Kolor tekstu */
     border: none;
     font-size: 1.2rem;
@@ -117,19 +144,48 @@ body {
     color: #ffffff; /* Kolor tekstu */
 }
 #expand-btn.hidden {
-    display: flex;
-    opacity: 0; /* Ukryj przycisk stopniowo */
-    pointer-events: none; /* Zablokuj interakcję */
+    /*display: flex;*/
+    display: none;
+    /*opacity: 0; !* Ukryj przycisk stopniowo *!*/
+    /*pointer-events: none; !* Zablokuj interakcję *!*/
+    /*visibility: hidden; !* Ukrycie elementu *!*/
+    /*height: 0; !* Wyzerowanie wysokości *!*/
+    /*width: 0; !* Wyzerowanie szerokości *!*/
+    /*padding: 0; !* Wyzerowanie marginesów wewnętrznych *!*/
+    /*margin: 0; !* Wyzerowanie marginesów *!*/
+    /*overflow: hidden; !* Ukrycie zawartości *!*/
+}
+
+form button.hidden{
+    display: none;
+}
+
+/* Usuń strzałki (suwak) z pola input type="number" */
+input[type="number"] {
+    -moz-appearance: textfield; /* Dla przeglądarek Firefox */
+    -webkit-appearance: none; /* Dla przeglądarek Webkit (Chrome, Safari, Edge) */
+    appearance: none; /* Ogólne ustawienie */
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0; /* Usuń margines, aby nie było miejsca po strzałkach */
 }
 
 /* Formularz */
 form label, form button {
     display: block;
     width: 100%;
-    margin-bottom: 10px;
+    /*margin-bottom: 10px;*/
     color: white; /* Tekst w formularzu w kolorze białym */
     font-size: 1.2rem;
 }
+
+form label{
+    margin-bottom: 10px;
+}
+
 
 form button {
     background-color: #F9B166;
@@ -140,6 +196,8 @@ form button {
     cursor: pointer;
     font-family: Garamond, serif;
     font-size: 1.2rem;
+    margin-top: 10px;
+    margin-bottom: 10px;
 
 }
 
@@ -159,24 +217,28 @@ form label:first-of-type {
     font-size: 1.45rem; /* Powiększenie tekstu */
     font-weight: bold;
     text-align: center;
-    margin-bottom: 18px;
+    /*margin-bottom: 8px;*/
+    margin-top: 10px;
+}
+
+form label:nth-of-type(3) {
+    /*margin-top: 15px;*/
 }
 
 /* Pole input dla dystansu */
 form input {
     display: block; /* Ustawienie bloku dla lepszego zarządzania marginesami */
-    max-width: 30%; /* Skrócenie szerokości */
-    width: auto;
-    padding: 5px 10px;
+    width: 30%; /* Skrócenie szerokości */
+    /*width: auto;*/
+    padding: 5px 15px;
     border-radius: 10px; /* Zaokrąglone rogi */
     background-color: #ddd; /* Szare tło */
     color: black; /* Czarny tekst w polu input */
     border: none; /* Brak obramowania */
-    margin-bottom: 18px;
+    /*margin-bottom: 5px;*/
     margin-left: auto; /* Automatyczne wyśrodkowanie */
     margin-right: auto; /* Automatyczne wyśrodkowanie */
     text-align: center; /* Wyśrodkowanie tekstu wewnątrz pola input */
-
 }
 
 /* Styl dla kontenerów opcji */
@@ -184,7 +246,7 @@ form input {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    margin-bottom: 10px;
+    /*margin-bottom: 10px;*/
     justify-content: center; /* Wyśrodkowanie poziome */
     align-items: center; /* Wyśrodkowanie pionowe */
 }
@@ -203,7 +265,7 @@ form input {
 
 /* Pierwszy element osobno */
 .filter-option:first-of-type {
-    flex-basis: 48%; /* Zajmuje całą szerokość */
+    flex-basis: 53%; /* Zajmuje całą szerokość */
     text-align: center; /* Wyśrodkowanie tekstu */
 }
 
@@ -223,9 +285,9 @@ form input {
 #start-coords {
     color: white; /* Biały tekst */
     text-align: left; /* Wyśrodkowanie tekstu */
-    margin-top: 18px;
+    /*margin-top: 18px;*/
     font-size: 1.2rem;
-    margin-bottom: 18px;
+    /*margin-bottom: 18px;*/
 }
 /* Styl dla popupów */
 .popup-container {

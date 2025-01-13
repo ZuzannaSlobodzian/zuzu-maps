@@ -10,7 +10,7 @@ class GraphhopperAPIView:
         self.profile = profile
 
     def create_route_json(self, trip_number, points):
-        filename = "trip" + str(trip_number) + ".json"
+        filename = "trip" + str(trip_number) + ".boundary"
 
         body = {
             "profile": "bike",

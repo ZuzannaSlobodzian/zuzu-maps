@@ -15,6 +15,7 @@
         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
         <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
         <script src="https://unpkg.com/@raruto/leaflet-elevation/dist/leaflet-elevation.min.js"></script>
+        <script src="https://unpkg.com/@mapbox/leaflet-pip@latest/leaflet-pip.js"></script>
     </head>
     <body>
         <div id="map"></div>
@@ -27,8 +28,12 @@
             <form id="route-form">
                 <label>Hej! Gdzie chcesz się dzisiaj wybrać?</label>
                 <p id="start-coords">1. Kliknij na mapę by wybrać punkt startowy:</p>
+                <div class="error-placeholder" id="start-coords-error"></div>
+
                 <label for="trip_distance">2. Przybliżony dystans wycieczki:</label>
                 <input type="number" placeholder="km" id="trip_distance" name="trip_distance" required>
+                <div class="error-placeholder" id="trip-distance-error"></div>
+
                 <label>3. Miejsca, które chcesz odwiedzić:</label>
                 <div id="type-filter-container">
                     <div class="filter-option" data-type="all">wszystkie możliwe</div>
@@ -40,6 +45,8 @@
                     <div class="filter-option" data-type="meadow">łąka</div>
                     <div class="filter-option" data-type="mine">kopalnia</div>
                 </div>
+                <div class="error-placeholder" id="type-filter-error"></div>
+
                 <button type="button" id="confirm-btn">przelicz trasy</button>
             </form>
             <button id="expand-btn" class="hidden">zaplanuj nową wycieczkę</button>

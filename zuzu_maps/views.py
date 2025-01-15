@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from django.http import JsonResponse
 from asgiref.sync import sync_to_async
+import logging
 
 # views.py
 from django.shortcuts import render
@@ -111,7 +112,7 @@ class TripView(APIView):
         all_points = []
         distances_list = []
 
-        print(route_json_path)
+        # print(route_json_path)
         for file_name in os.listdir(route_json_path):
             if file_name.endswith('.boundary'):
                 with open(os.path.join(route_json_path, file_name), 'r', encoding='utf-8') as json_file:
@@ -122,9 +123,9 @@ class TripView(APIView):
                     # print(road_list)
                     # Zakładamy, że dane zawierają klucz "polyline"
                     encoded_polyline = data['paths'][0]['points']
-                    print("mmmmm")
+                    # print("mmmmm")
                     if encoded_polyline:
-                        print("mamy")
+                        # print("mamy")
                         decoded_points = self.decode_polyline(encoded_polyline)
                         all_points.append(decoded_points)
         return all_points, distances_list
@@ -150,58 +151,65 @@ class TripView(APIView):
         return updated_points
 
     def get(self, request):
-        try:
-            # Pobranie parametrów z zapytania
-            start_lat = request.query_params.get('start_lat')
-            start_lng = request.query_params.get('start_lng')
-            trip_distance = request.query_params.get('trip_distance')
-            place_types = request.query_params.get('type_filter', '').split(',')
+        global logger
+        # try:
+        # Pobranie parametrów z zapytania
+        start_lat = request.query_params.get('start_lat')
+        start_lng = request.query_params.get('start_lng')
+        trip_distance = request.query_params.get('trip_distance')
+        place_types = request.query_params.get('type_filter', '').split(',')
 
-            print(place_types)
+        print(place_types)
 
-            if "all" in place_types:
-                place_types = ["all"]
+        if "all" in place_types:
+            place_types = ["all"]
 
-            print(place_types)
+        print(place_types)
 
-            # nie potrzebuje tego bo zalatwiam to w formularzu
-            # if not all([start_lat, start_lng, trip_distance]):
-            #     return Response({"error": "Brak wymaganych parametrów"}, status=status.HTTP_400_BAD_REQUEST)
+        # nie potrzebuje tego bo zalatwiam to w formularzu
+        # if not all([start_lat, start_lng, trip_distance]):
+        #     return Response({"error": "Brak wymaganych parametrów"}, status=status.HTTP_400_BAD_REQUEST)
 
-            # Konwersja parametrów do odpowiednich typów
-            start_lat = float(start_lat)
-            start_lng = float(start_lng)
-            trip_distance = int(trip_distance)
+        # Konwersja parametrów do odpowiednich typów
+        start_lat = float(start_lat)
+        start_lng = float(start_lng)
+        trip_distance = int(trip_distance)
 
-            # Inicjalizacja serwisu TripService
-            trip_service = RouteService(start_lat, start_lng, trip_distance, place_types)
+        # Inicjalizacja serwisu TripService
+        trip_service = RouteService(start_lat, start_lng, trip_distance, place_types)
 
-            # Generowanie sekwencji trasy
-            all_place_points = trip_service.generate_trip_sequence()
+        # Generowanie sekwencji trasy
+        all_place_points = trip_service.generate_trip_sequence()
 
-            all_points, distance_list = self.recalculate_json()
+        all_points, distance_list = self.recalculate_json()
 
-            path_route_json = f'zuzu_maps\\route_jsons\\'
-            for file_name in os.listdir(path_route_json):
-                file_path = os.path.join(path_route_json, file_name)
-                os.remove(file_path)
+        path_route_json = f'zuzu_maps\\route_jsons\\'
+        for file_name in os.listdir(path_route_json):
+            file_path = os.path.join(path_route_json, file_name)
+            os.remove(file_path)
 
-            return Response({"points": all_points, "places": all_place_points, "distances": distance_list},
-                            status=status.HTTP_200_OK)
 
-        except Exception as e:
-            # Zwróć komunikat błędu do klienta
-            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({"points": all_points, "places": all_place_points, "distances": distance_list},
+                        status=status.HTTP_200_OK)
+
+
+        # except Exception as e:
+        #     print("caught an exception")
+        #     print(str(e))
+        #     logger = logging.getLogger(__name__)
+        #     logger.error(f"Error in TripView: {str(e)}")
+        #
+        #     return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
         json_data = request.data
         points = json_data.get('points', [])
-        print(points)
-        print("#####################")
+        # print(points)
+        # print("#####################")
 
         # 2. Obliczanie wysokości (drugi etap)
         all_points = self.add_elevation(points)
-        print(all_points)
+        # print(all_points)
 
         json_data['points'] = all_points
         # Zapisz wyniki

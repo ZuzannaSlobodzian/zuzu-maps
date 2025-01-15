@@ -249,6 +249,7 @@ tripDistance.addEventListener("blur", function (e) {
 
 });
 
+
 expandButton.addEventListener("click", function () {
     expandButton.classList.add("hidden"); // Ukrywamy przycisk
     formContainer.classList.remove("collapsed"); // Usuwamy klasę collapsed
@@ -280,8 +281,7 @@ expandButton.addEventListener("click", function () {
     }, 500); // Czas dopasowany do `transition` formularza
 
     resetAllRoutesAndProfiles();
-    isCancelled = false;
-});
+    isCancelled = false;});
 
 function isPointInPolygon(point, polygon) {
     let inside = false;
@@ -418,211 +418,218 @@ async function loadRoute(trip_distance, typeFilter) {
 
     try {
         const apiUrl = `trip?start_lat=${startCoords.lat}&start_lng=${startCoords.lng}&trip_distance=${trip_distance}&type_filter=${typeFilter.join(',')}`;
-        const response = await fetch(apiUrl);
-    } catch (error){
-        hideLoader('route-loader');
-        console.error("Błąd podczas pobierania danych:", error.message);
-        alert(`Wystąpił błąd: ${error.message}`);
-    }
+        const response = await fetch(apiUrl, {signal});
 
-    if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-
-
-    const data = await response.json();
-    const profileHeight = Math.max(100, window.innerHeight / data.points.length); // Dynamiczna wysokość
-
-    console.log("API Response:", data);
-
-
-
-    // Rysowanie tras i profili wysokości
-    data.points.forEach((route, index) => {
-        if (Array.isArray(route) && route.length > 1) {
-            const latLngs = route.map(point => [point[0], point[1]]);
-
-            // Wybieranie koloru z palety (cykliczne użycie kolorów)
-            const color = colorPalette[index % colorPalette.length];
-
-            // Czarna obramówka (thin background polyline for contrast)
-            const borderPolyline = L.polyline(latLngs, { color: 'black', weight: 6, opacity: 0.7 });
-            borderPolyline.addTo(map);
-
-            // Właściwa trasa w kolorze z palety
-            const polyline = L.polyline(latLngs, { color: color, weight: 4, interactive: true, opacity: 1 });
-            polyline.addTo(map);
-
-            routes.push(polyline);
-            borders.push(borderPolyline);
-
-
+        if (!response.ok) {
+            // Rzutowanie wyjątku na podstawie odpowiedzi
+            const errorData = await response.json();
+            throw new Error(errorData.error || `HTTP error! Status: ${response.status}`);
         }
-    });
+
+        const data = await response.json();
+        console.log("API Response:", data);
 
 
+        // if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
 
-                // Dodawanie popupów
-    map.removeLayer(lastMarker);
-    lastMarker = L.marker([startCoords.lat.toFixed(5), startCoords.lng.toFixed(5)], {icon: orangeIcon}).addTo(map)
 
-    if (data.places) {
-        data.places.forEach(placeGroup => {
-            route_markers = []
-            placeGroup.forEach(place => {
-                if (place.latitude && place.longitude) {
-                    marker = L.marker([place.latitude, place.longitude], { icon: blackIcon })
-                        .bindPopup(`
+        // const data = await response.json();
+        const profileHeight = Math.max(100, window.innerHeight / data.points.length); // Dynamiczna wysokość
+
+        // console.log("API Response:", data);
+
+
+        // Rysowanie tras i profili wysokości
+        data.points.forEach((route, index) => {
+            if (Array.isArray(route) && route.length > 1) {
+                const latLngs = route.map(point => [point[0], point[1]]);
+
+                // Wybieranie koloru z palety (cykliczne użycie kolorów)
+                const color = colorPalette[index % colorPalette.length];
+
+                // Czarna obramówka (thin background polyline for contrast)
+                const borderPolyline = L.polyline(latLngs, {color: 'black', weight: 6, opacity: 0.7});
+                borderPolyline.addTo(map);
+
+                // Właściwa trasa w kolorze z palety
+                const polyline = L.polyline(latLngs, {color: color, weight: 4, interactive: true, opacity: 1});
+                polyline.addTo(map);
+
+                routes.push(polyline);
+                borders.push(borderPolyline);
+
+
+            }
+        });
+
+
+        // Dodawanie popupów
+        map.removeLayer(lastMarker);
+        lastMarker = L.marker([startCoords.lat.toFixed(5), startCoords.lng.toFixed(5)], {icon: orangeIcon}).addTo(map)
+
+        if (data.places) {
+            data.places.forEach(placeGroup => {
+                route_markers = []
+                placeGroup.forEach(place => {
+                    if (place.latitude && place.longitude) {
+                        marker = L.marker([place.latitude, place.longitude], {icon: blackIcon})
+                            .bindPopup(`
                             <div class="popup-container">
                                 <div class="popup-name">${place.name}</div>
                                 <img src="/static/images/${place.image}.jpg" alt="${place.name} " class="popup-image">
                                 <div class="popup-description">${place.description}</div>
                             </div>
                     `);
-                    marker.addTo(map);
-                    route_markers.push(marker);
-                }
+                        marker.addTo(map);
+                        route_markers.push(marker);
+                    }
+                });
+                markers.push(route_markers)
             });
-            markers.push(route_markers)
-        });
-    }
+        }
 
-    hideLoader('route-loader');
-    showLoader('elevation-loader');
+        hideLoader('route-loader');
+        showLoader('elevation-loader');
 
-    try {
 
-        const elevationResponse = await fetch(`/zuzu_maps/trip`, {
+            const elevationResponse = await fetch(`/zuzu_maps/trip`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ points: data.points }),
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({points: data.points}),
                 signal, // Przekazanie sygnału kontrolera do fetch
             });
 
-        const withElevationData = await elevationResponse.json(); // Konwersja odpowiedzi do JSON
-        if (isCancelled) {
-            hideLoader('elevation-loader');
-            isCancelled = false;
-            return;
-        }
+            const withElevationData = await elevationResponse.json(); // Konwersja odpowiedzi do JSON
+            if (isCancelled) {
+                hideLoader('elevation-loader');
+                isCancelled = false;
+                return;
+            }
 
-        console.log("API Response:", withElevationData);
+            console.log("API Response:", withElevationData);
 
-        if (withElevationData.points) {
-            withElevationData.points.forEach((route, index) => {
-                if (isCancelled) {
-                    hideLoader('elevation-loader');
-                    isCancelled = false;
-                    return;
-                }
-
-                const distances = [];
-                let cumulativeDistance = 0;
-                for (let i = 0; i < route.length; i++) {
-                    if (i > 0) {
-                        const lat1 = route[i - 1][0];
-                        const lon1 = route[i - 1][1];
-                        const lat2 = route[i][0];
-                        const lon2 = route[i][1];
-                        const segmentDistance = calculateDistance(lat1, lon1, lat2, lon2);
-                        cumulativeDistance += segmentDistance;
+            if (withElevationData.points) {
+                withElevationData.points.forEach((route, index) => {
+                    if (isCancelled) {
+                        hideLoader('elevation-loader');
+                        isCancelled = false;
+                        return;
                     }
-                    distances.push(cumulativeDistance.toFixed(2)); // Zaokrąglenie do 2 miejsc po przecinku
-                }
 
-                const elevations = route.map(point => point[2]);
-                const totalDistance = data.distances[index]; // Całkowity dystans trasy z JSON
+                    const distances = [];
+                    let cumulativeDistance = 0;
+                    for (let i = 0; i < route.length; i++) {
+                        if (i > 0) {
+                            const lat1 = route[i - 1][0];
+                            const lon1 = route[i - 1][1];
+                            const lat2 = route[i][0];
+                            const lon2 = route[i][1];
+                            const segmentDistance = calculateDistance(lat1, lon1, lat2, lon2);
+                            cumulativeDistance += segmentDistance;
+                        }
+                        distances.push(cumulativeDistance.toFixed(2)); // Zaokrąglenie do 2 miejsc po przecinku
+                    }
+
+                    const elevations = route.map(point => point[2]);
+                    const totalDistance = data.distances[index]; // Całkowity dystans trasy z JSON
 
 
-                const elevationItem = document.createElement("div");
-                elevationItem.className = "elevation-item";
+                    const elevationItem = document.createElement("div");
+                    elevationItem.className = "elevation-item";
 
-                const itemColor = colorPalette[index]; // Pobranie koloru na podstawie indeksu
-                elevationItem.style.backgroundColor = itemColor;
+                    const itemColor = colorPalette[index]; // Pobranie koloru na podstawie indeksu
+                    elevationItem.style.backgroundColor = itemColor;
 
-                // Tworzenie div dla informacji o dystansie
-                const infoDiv = document.createElement("div");
-                infoDiv.className = "elevation-info";
-                infoDiv.style.height = `${profileHeight}px`
-                infoDiv.innerHTML = `<div class="route">trasa ${index + 1}</div>
+                    // Tworzenie div dla informacji o dystansie
+                    const infoDiv = document.createElement("div");
+                    infoDiv.className = "elevation-info";
+                    infoDiv.style.height = `${profileHeight}px`
+                    infoDiv.innerHTML = `<div class="route">trasa ${index + 1}</div>
                                     <div class="distance">DYSTANS:
                                     <div class="number">${totalDistance} km</div>`;
-                elevationItem.appendChild(infoDiv);
+                    elevationItem.appendChild(infoDiv);
 
-                // Tworzenie div dla profilu
-                const elevationDiv = document.createElement("div");
-                elevationDiv.className = "elevation-profile";
-                elevationDiv.id = `elevation-profile-${index}`;
-                elevationDiv.style.height = `${profileHeight}px`
-                elevationItem.appendChild(elevationDiv);
+                    // Tworzenie div dla profilu
+                    const elevationDiv = document.createElement("div");
+                    elevationDiv.className = "elevation-profile";
+                    elevationDiv.id = `elevation-profile-${index}`;
+                    elevationDiv.style.height = `${profileHeight}px`
+                    elevationItem.appendChild(elevationDiv);
 
 
-                // Dodanie całego elementu do kontenera
-                document.getElementById("elevations-container").appendChild(elevationItem);
+                    // Dodanie całego elementu do kontenera
+                    document.getElementById("elevations-container").appendChild(elevationItem);
 
-                // Rysowanie wykresu za pomocą Plotly
-                Plotly.newPlot(elevationDiv.id, [
-                    {
-                        x: distances,
-                        y: elevations,
-                        type: 'scatter',
-                        mode: 'lines',
-                        line: {
-                            color: '#F5A342',
-                            shape: 'spline', // Ustawienie interpolacji (spline = smooth)
-                            smoothing: 50, // Wyższa wartość oznacza bardziej wygładzony wykres
-                            width: 2
+                    // Rysowanie wykresu za pomocą Plotly
+                    Plotly.newPlot(elevationDiv.id, [
+                        {
+                            x: distances,
+                            y: elevations,
+                            type: 'scatter',
+                            mode: 'lines',
+                            line: {
+                                color: '#F5A342',
+                                shape: 'spline', // Ustawienie interpolacji (spline = smooth)
+                                smoothing: 50, // Wyższa wartość oznacza bardziej wygładzony wykres
+                                width: 2
+                            },
+                            fill: 'tozeroy', // Wypełnienie pod wykresem
+                            fillcolor: 'rgba(249, 177, 102, 0.5)', // Kolor wypełnienia
+                        }
+                    ], {
+                        margin: {t: 10, b: 40, l: 40, r: 10},
+                        xaxis: {
+                            title: false,
+                            showgrid: false,
+                            zeroline: false,
+                            color: "#FFFFFF",
+                            linecolor: "#FFFFFF",
+                            tickcolor: "#FFFFFF",
+                            linewidth: 1.5, // Grubość osi
+                            ticklen: 8,
+
                         },
-                        fill: 'tozeroy', // Wypełnienie pod wykresem
-                        fillcolor: 'rgba(249, 177, 102, 0.5)', // Kolor wypełnienia
-                    }
-                ], {
-                    margin: {t: 10, b: 40, l: 40, r: 10},
-                    xaxis: {
-                        title: false,
-                        showgrid: false,
-                        zeroline: false,
-                        color: "#FFFFFF",
-                        linecolor: "#FFFFFF",
-                        tickcolor: "#FFFFFF",
-                        linewidth: 1.5, // Grubość osi
-                        ticklen: 8,
+                        yaxis: {
+                            title: false,
+                            zeroline: false,
+                            range: [Math.min(...elevations) - 10, Math.max(...elevations) + 20],
+                            color: "#FFFFFF",
+                            linecolor: "#FFFFFF",
+                            tickcolor: "#FFFFFF",
+                            linewidth: 1.5, // Grubość osi
+                            ticklen: 5,
+                            showgrid: true, // Włączenie siatki poziomej
+                            gridcolor: "rgba(255, 255, 255, 0.2)", // Lekki biały kolor dla siatki
+                            gridwidth: 1, // Cienka linia siatki
+                        },
+                        plot_bgcolor: "rgba(51, 51, 51, 1)",
+                        paper_bgcolor: "rgba(51, 51, 51, 0.8)",
+                        font: {color: "#FFFFFF"}
+                    }, {
+                        displayModeBar: false
+                    });
 
-                    },
-                    yaxis: {
-                        title: false,
-                        zeroline: false,
-                        range: [Math.min(...elevations) - 10, Math.max(...elevations) + 20],
-                        color: "#FFFFFF",
-                        linecolor: "#FFFFFF",
-                        tickcolor: "#FFFFFF",
-                        linewidth: 1.5, // Grubość osi
-                        ticklen: 5,
-                        showgrid: true, // Włączenie siatki poziomej
-                        gridcolor: "rgba(255, 255, 255, 0.2)", // Lekki biały kolor dla siatki
-                        gridwidth: 1, // Cienka linia siatki
-                    },
-                    plot_bgcolor: "rgba(51, 51, 51, 1)",
-                    paper_bgcolor: "rgba(51, 51, 51, 0.8)",
-                    font: {color: "#FFFFFF"}
-                }, {
-                    displayModeBar: false
-                });
+                })
+            }
+            const elevationProfiles = document.querySelectorAll('.elevation-item');
 
-            })}
-        const elevationProfiles = document.querySelectorAll('.elevation-item');
-
-        hideLoader('elevation-loader');
-        console.log(markers)
-        setupInteractivity(elevationProfiles, routes, borders, markers);
+            hideLoader('elevation-loader');
+            console.log(markers)
+            setupInteractivity(elevationProfiles, routes, borders, markers);
 
         } catch (error) {
+            hideLoader('route-loader');
+
             if (error.name === 'AbortError') {
                 console.log('Fetch został anulowany.');
-                abortController = null; // Resetowanie kontrolera po zakończeniu
             } else {
-                console.error('Błąd podczas fetch:', error);
+                console.error("Błąd podczas pobierania danych:", error.message);
+                alert(`Wystąpił błąd: ${error.message}`);
             }
+            setTimeout(() => {
+                expandButton.click();
+            }, 1000);
         } finally {
-            hideLoader('elevation-loader');
-            abortController = null; // Resetowanie kontrolera po zakończeniu
-        }
+            // abortController = null; // Resetowanie kontrolera po zakończeniu
+    }
 }

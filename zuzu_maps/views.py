@@ -152,54 +152,54 @@ class TripView(APIView):
 
     def get(self, request):
         global logger
-        # try:
+        try:
         # Pobranie parametrów z zapytania
-        start_lat = request.query_params.get('start_lat')
-        start_lng = request.query_params.get('start_lng')
-        trip_distance = request.query_params.get('trip_distance')
-        place_types = request.query_params.get('type_filter', '').split(',')
+            start_lat = request.query_params.get('start_lat')
+            start_lng = request.query_params.get('start_lng')
+            trip_distance = request.query_params.get('trip_distance')
+            place_types = request.query_params.get('type_filter', '').split(',')
 
-        print(place_types)
+            print(place_types)
 
-        if "all" in place_types:
-            place_types = ["all"]
+            if "all" in place_types:
+                place_types = ["all"]
 
-        print(place_types)
+            print(place_types)
 
-        # nie potrzebuje tego bo zalatwiam to w formularzu
-        # if not all([start_lat, start_lng, trip_distance]):
-        #     return Response({"error": "Brak wymaganych parametrów"}, status=status.HTTP_400_BAD_REQUEST)
+            # nie potrzebuje tego bo zalatwiam to w formularzu
+            # if not all([start_lat, start_lng, trip_distance]):
+            #     return Response({"error": "Brak wymaganych parametrów"}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Konwersja parametrów do odpowiednich typów
-        start_lat = float(start_lat)
-        start_lng = float(start_lng)
-        trip_distance = int(trip_distance)
+            # Konwersja parametrów do odpowiednich typów
+            start_lat = float(start_lat)
+            start_lng = float(start_lng)
+            trip_distance = int(trip_distance)
 
-        # Inicjalizacja serwisu TripService
-        trip_service = RouteService(start_lat, start_lng, trip_distance, place_types)
+            # Inicjalizacja serwisu TripService
+            trip_service = RouteService(start_lat, start_lng, trip_distance, place_types)
 
-        # Generowanie sekwencji trasy
-        all_place_points = trip_service.generate_trip_sequence()
+            # Generowanie sekwencji trasy
+            all_place_points = trip_service.generate_trip_sequence()
 
-        all_points, distance_list = self.recalculate_json()
+            all_points, distance_list = self.recalculate_json()
 
-        path_route_json = f'zuzu_maps\\route_jsons\\'
-        for file_name in os.listdir(path_route_json):
-            file_path = os.path.join(path_route_json, file_name)
-            os.remove(file_path)
-
-
-        return Response({"points": all_points, "places": all_place_points, "distances": distance_list},
-                        status=status.HTTP_200_OK)
+            path_route_json = f'zuzu_maps\\route_jsons\\'
+            for file_name in os.listdir(path_route_json):
+                file_path = os.path.join(path_route_json, file_name)
+                os.remove(file_path)
 
 
-        # except Exception as e:
-        #     print("caught an exception")
-        #     print(str(e))
-        #     logger = logging.getLogger(__name__)
-        #     logger.error(f"Error in TripView: {str(e)}")
-        #
-        #     return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"points": all_points, "places": all_place_points, "distances": distance_list},
+                            status=status.HTTP_200_OK)
+
+
+        except Exception as e:
+            print("caught an exception")
+            print(str(e))
+            logger = logging.getLogger(__name__)
+            logger.error(f"Error in TripView: {str(e)}")
+
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     def post(self, request):
         json_data = request.data

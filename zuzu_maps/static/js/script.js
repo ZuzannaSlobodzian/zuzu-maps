@@ -3,8 +3,18 @@ const map = L.map('map').setView([50.04410, 19.95824], 12); // Kraków
 
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18,
+    zoomControl: false, // Wyłączenie kontrolki zoomu
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
+
+// map.zoomControl.setPosition('bottomright');
+// map.zoomControl.remove();
+
+document.querySelector('.leaflet-control-zoom-in').addEventListener('click', () => {
+    console.log('Zoom in clicked');
+});
+
+
 
 let krakow_boundary = null;
 fetch("/static/boundary/krakow_boundary.json")
@@ -77,6 +87,8 @@ function highlightRouteAndProfile(index, elevationProfiles, routes, borders, mar
 
 }
 
+// zmienic ta nazwe tez
+
 function resetAllProfiles(elevationProfiles) {
     // Usuń wszystkie efekty z profili
         elevationProfiles.forEach(profile => {
@@ -105,6 +117,7 @@ function setupInteractivity(elevationProfiles, routes, borders, markers) {
     });
 }
 
+// zmienic ta nazwe
 function resetAllRoutesAndProfiles() {
     // Usuń wszystkie profile wysokościowe z DOM
     const elevationsContainer = document.getElementById("elevations-container");
@@ -126,14 +139,14 @@ function resetAllRoutesAndProfiles() {
 
     console.log(markers)
 
-    // Resetowanie markerów i tras
-    if (lastMarker) {
-        map.removeLayer(lastMarker);
-        lastMarker = null;
-    }
+    // // Resetowanie markerów i tras
+    // if (lastMarker) {
+    //     map.removeLayer(lastMarker);
+    //     lastMarker = null;
+    // }
 
     // Reset współrzędnych startowych
-    startCoords = null;
+    // startCoords = null;
     setTrip = true;
 }
 
@@ -203,9 +216,12 @@ confirmButton.addEventListener("click", function () {
         tripDistanceError.textContent = "";
         tripDistanceError.style.visibility = "hidden";
         startCoordsError.textContent = "";
-        startCoordsError.style.visibility = "hidden";        coordsFlag = false;
-        distanceFlag = false;
-        optionsFlag = false;
+        startCoordsError.style.visibility = "hidden";
+
+        const errorMessageBox = document.getElementById("error-message-box");
+        if (errorMessageBox.style.display === "flex") {
+            errorMessageBox.style.display = "none"; // Ukryj komunikat błędu
+        }
     }
 
     const trip_distance = document.getElementById("trip_distance").value;
@@ -219,7 +235,7 @@ confirmButton.addEventListener("click", function () {
     setTimeout(() => {
         document.getElementById("route-form").classList.add("hidden"); // Ukryj formularz
         expandButton.classList.remove("hidden"); // Pokaż przycisk
-    }, 1300); // Czas dopasowany do `transition` formularza
+    }, 1500); // Czas dopasowany do `transition` formularza
 
     loadRoute(trip_distance, selectedFilters);
 
@@ -239,7 +255,9 @@ tripDistance.addEventListener("blur", function (e) {
             distanceFlag = false;
         // hideConfirmButton()
     }else if(!tripDistance.value.trim()){
-                    distanceFlag = false;
+            tripDistanceError.textContent = "podaj dystans wycieczki";
+            tripDistanceError.style.visibility = "visible";
+            distanceFlag = false;
 
     }else{
             tripDistanceError.textContent = "";
@@ -260,20 +278,21 @@ expandButton.addEventListener("click", function () {
     // Anulowanie żądania fetch
     if (abortController) {
         abortController.abort(); // Anuluje żądanie fetch
+        hideLoader('elevation-loader');
     }
 
-    const form = document.getElementById("route-form");
-    form.reset(); // Resetuje wszystkie pola formularza
+    // const form = document.getElementById("route-form");
+    // form.reset(); // Resetuje wszystkie pola formularza
 
     // Usunięcie zaznaczeń opcji w filtrach
-    const selectedOptions = document.querySelectorAll(".filter-option.selected");
-    selectedOptions.forEach(option => {
-        option.classList.remove("selected");
-    });
+    // const selectedOptions = document.querySelectorAll(".filter-option.selected");
+    // selectedOptions.forEach(option => {
+    //     option.classList.remove("selected");
+    // });
 
     // Wyczyszczenie pola startowego współrzędnych
-    const startCoords = document.getElementById("start-coords");
-    startCoords.innerHTML = "1. Kliknij na mapę, by wybrać punkt startowy:";
+    // const startCoords = document.getElementById("start-coords");
+    // startCoords.innerHTML = "1. Kliknij na mapę, by wybrać punkt startowy:";
 
     // Pokazujemy formularz z małym opóźnieniem, aby zsynchronizować z animacją
     setTimeout(() => {
@@ -281,7 +300,8 @@ expandButton.addEventListener("click", function () {
     }, 500); // Czas dopasowany do `transition` formularza
 
     resetAllRoutesAndProfiles();
-    isCancelled = false;});
+    isCancelled = false;
+});
 
 function isPointInPolygon(point, polygon) {
     let inside = false;
@@ -410,6 +430,7 @@ async function loadRoute(trip_distance, typeFilter) {
     setTrip = false;
 
     abortController = new AbortController();
+
     const signal = abortController.signal;
 
     showLoader('route-loader');
@@ -434,7 +455,6 @@ async function loadRoute(trip_distance, typeFilter) {
 
 
         // const data = await response.json();
-        const profileHeight = Math.max(100, window.innerHeight / data.points.length); // Dynamiczna wysokość
 
         // console.log("API Response:", data);
 
@@ -480,6 +500,11 @@ async function loadRoute(trip_distance, typeFilter) {
                                 <div class="popup-description">${place.description}</div>
                             </div>
                     `);
+                        document.addEventListener('click', function (e) {
+                            if (e.target && e.target.id === 'custom-close-btn') {
+                                map.closePopup();
+                            }
+                        });
                         marker.addTo(map);
                         route_markers.push(marker);
                     }
@@ -492,21 +517,29 @@ async function loadRoute(trip_distance, typeFilter) {
         showLoader('elevation-loader');
 
 
-            const elevationResponse = await fetch(`/zuzu_maps/trip`, {
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: JSON.stringify({points: data.points}),
-                signal, // Przekazanie sygnału kontrolera do fetch
-            });
+        const elevationResponse = await fetch(`/zuzu_maps/trip`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({points: data.points}),
+            signal, // Przekazanie sygnału kontrolera do fetch
+        });
 
-            const withElevationData = await elevationResponse.json(); // Konwersja odpowiedzi do JSON
-            if (isCancelled) {
-                hideLoader('elevation-loader');
-                isCancelled = false;
-                return;
+        const withElevationData = await elevationResponse.json(); // Konwersja odpowiedzi do JSON
+        if (isCancelled) {
+            hideLoader('elevation-loader');
+            isCancelled = false;
+            return;
+        }
+
+        console.log("API Response:", withElevationData);
+        let profileCount = data.points.length;
+        let profileHeight = null;
+        if (profileCount > 3) {
+
+            profileHeight = Math.max(100, window.innerHeight / profileCount); // Dynamiczna wysokość
+        }else {
+                profileHeight = 200
             }
-
-            console.log("API Response:", withElevationData);
 
             if (withElevationData.points) {
                 withElevationData.points.forEach((route, index) => {
@@ -618,18 +651,40 @@ async function loadRoute(trip_distance, typeFilter) {
             setupInteractivity(elevationProfiles, routes, borders, markers);
 
         } catch (error) {
-            hideLoader('route-loader');
+        hideLoader('route-loader');
+        if (abortController) {
+            abortController.abort(); // Anuluje żądanie fetch
+        }
+        if (error.message === "444") {
 
-            if (error.name === 'AbortError') {
-                console.log('Fetch został anulowany.');
-            } else {
-                console.error("Błąd podczas pobierania danych:", error.message);
-                alert(`Wystąpił błąd: ${error.message}`);
-            }
+            console.error("Błąd podczas pobierania danych:", error.message);
+            setTimeout(() => {
+
+                // Wyświetlenie wiadomości w `div`
+                const errorMessageContainer = document.getElementById("error-message-box");
+                const errorMain = document.getElementById("error-main");
+                const errorBase = document.getElementById("error-base");
+                const errorCloseBtn = document.getElementById("error-close-btn");
+
+              errorMain.innerHTML = `Brak dostatecznej ilości punktów
+<!--                  <br>z tej kategorii</br>-->
+                    z tej kategorii
+                   <br>w podanym zasięgu,</br>`;
+                errorBase.innerHTML = `zmień parametry wycieczki.`
+                errorMessageContainer.style.display = "flex";
+
+                // Obsługa zamknięcia okna
+                errorCloseBtn.addEventListener("click", () => {
+                    errorMessageContainer.style.display = "none";
+                });
+            }, 1000);
+
+            // }
             setTimeout(() => {
                 expandButton.click();
-            }, 1000);
-        } finally {
+            }, 2000);
+        }
+    }finally {
             // abortController = null; // Resetowanie kontrolera po zakończeniu
     }
 }

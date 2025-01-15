@@ -13,11 +13,13 @@ body, html {
     font-family: Candara, sans-serif;
     background-color: #252525; /* Kolor tła */
     height: 100%;
-    display: flex;
-    flex-direction: column;
+    /*display: flex;*/
+    /*flex-direction: column;*/
     overflow: hidden; /* Ukryj nadmiar */
 
 }
+
+
 
 /* Pasek na górze */
 #top-bar {
@@ -44,19 +46,39 @@ body, html {
 
 /* Kontener mapy */
 #map {
+    margin: 0;
+    padding: 0;
     height: 100%; /* Dostosowanie wysokości mapy */
     width: calc(100%); /* Dodanie marginesów */
     /*margin-left: 0.75cm;*/
     /*margin-right: 10cm;*/
     /*border-radius: 10px; !* Zaokrąglone rogi *!*/
     /*box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7); !* Cień *!*/
-    overflow: hidden;
+    /*overflow: hidden;*/
+    position: relative; /* Relatywne pozycjonowanie mapy */
+    overflow: visible;
+    z-index: 900;
 }
 
-/*form {*/
-/*    display: flex;*/
-/*    flex-direction: column;*/
+/*.leaflet-control-zoom {*/
+/*    position: absolute !important; !* Wymuś nadpisanie *!*/
+/*    bottom: 20px; !* Odstęp od dołu *!*/
+/*    right: 20px; !* Odstęp od prawej *!*/
+/*    !*width: 50px;*!*/
+/*    !*height: 50px;*!*/
+/*    z-index: 2000; !* Upewnij się, że kontrolki są nad mapą *!*/
+/*        pointer-events: auto; !* Umożliw kliknięcia *!*/
+
 /*}*/
+
+/*.leaflet-control-container {*/
+/*    overflow: visible !important; !* Upewnij się, że element nie ukrywa kontrolek *!*/
+/*}*/
+
+form {
+    display: flex;
+    flex-direction: column;
+}
 
 /* Kontener formularza */
 #form-container {
@@ -330,6 +352,44 @@ form input {
     width: 260px;
 }
 
+/*.custom-popup .leaflet-popup-close-button {*/
+/*    position: absolute; !* Upewnij się, że jest absolutnie pozycjonowany *!*/
+/*    top: 10px; !* Odstęp od góry popupu *!*/
+/*    right: 10px; !* Odstęp od prawej strony *!*/
+/*    color: #F5A342; !* Kolor przycisku *!*/
+/*    font-size: 20px; !* Rozmiar czcionki *!*/
+/*    cursor: pointer; !* Wskaźnik kursora *!*/
+/*    z-index: 3000; !* Upewnij się, że jest nad innymi elementami *!*/
+/*}*/
+
+.leaflet-popup-close-button {
+    position: absolute !important;
+    top: 10px !important;
+    right: 15px !important;
+    font-size: 15px !important;
+    cursor: pointer !important;
+    color: #F5A342 !important;
+    background: none !important; /* Usuń tło */
+    border: none !important; /* Usuń obramowanie */
+    text-shadow: none !important; /* Usuń cień tekstu */
+}
+
+.leaflet-popup-close-button:hover {
+    color: #B6B6B4 !important;
+
+}
+
+/*.leaflet-popup-close-button {*/
+/*    all: unset;*/
+/*    font-size: 25px;*/
+/*    cursor: pointer;*/
+/*    color: #000000;*/
+/*    position: absolute;*/
+/*    top: 5px;*/
+/*    right: 15px;*/
+/*}*/
+
+
 /* Ustawienia dla kontenera popupów w Leaflet */
 .custom-popup .leaflet-popup-content-wrapper {
     background-color: #333; /* Szare tło */
@@ -372,8 +432,8 @@ form input {
     width: 25%;
     position: absolute;
     right: 0;
-    top: 0;
-    height: 100vh;
+    bottom: 0;
+    /*height: 100vh;*/
     overflow-y: auto; /* Dodaj przewijanie, jeśli jest dużo profili */
     z-index: 1000;
 }
@@ -468,4 +528,71 @@ form input {
     filter: none;
     opacity: 1;
     transition: filter 0.3s, opacity 0.3s;
+}
+
+
+/*#error-message-container {*/
+/*    position: fixed;*/
+/*    top: 0;*/
+/*    left: 0;*/
+/*    width: 100%;*/
+/*    height: 100%;*/
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*    align-items: center;*/
+/*    background: rgba(0, 0, 0, 0.7);*/
+/*    z-index: 1000;*/
+/*}*/
+
+#error-message-box {
+    position: fixed; /* Ustawienie pozycji na stałe względem ekranu */
+    top: 50%; /* Pozycjonowanie w pionie */
+    left: 50%; /* Pozycjonowanie w poziomie */
+    transform: translate(-50%, -50%); /* Środkowanie względem własnych wymiarów */
+    justify-content: center;
+    background: #BF4F51;
+    color: #333;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 400px;
+    /*height: 20%;*/
+    width: 20%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    /*border-color: #F5A342;*/
+    border: 1px solid #ffffff; /* Pomarańczowa obramówka */
+
+    /*box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5); !* Usunięcie cieni *!*/
+}
+
+#error-close-btn {
+    position: absolute;
+    top: 5px;
+    right: 15px;
+    font-size: 25px;
+    cursor: pointer;
+    color: #000000;
+}
+
+#error-main {
+    font-size: 1.35rem;
+    /*margin-top: 10px;*/
+    padding: 5px;
+    /*background: #9cc222;*/
+    justify-content: center;
+}
+
+#error-base{
+    font-size: 1.25rem;
+    padding: 0 5px 5px 5px;
+    /*background: #4682b4;*/
+    font-weight: bold;
+    text-align: center;
+}
+
+.leaflet-control-zoom {
+    display: none !important;
 }

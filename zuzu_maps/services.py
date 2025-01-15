@@ -32,7 +32,7 @@ class RouteService:
 
         print(self.close_points_list)
         if not self.close_points_list:
-            raise Exception("Brak dostatecznej ilości punktów z tej kategorii w podanym zasięgu.")
+            raise Exception("444")
 
     def calculate_points_to_json(self):
         points = [
@@ -165,6 +165,9 @@ class RouteService:
 
 
         print(self.all_place_points)
+
+        if self.all_place_points == []:
+            raise Exception("444")
         return self.all_place_points
 
 

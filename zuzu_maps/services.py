@@ -90,44 +90,46 @@ class RouteService:
             print(self.visited_list)
 
             #ten if nie jest potrzebny bo wiemy że spełnia założenia
-            if distance_matrix[0, column_index] + distance_matrix[0, column_index] < self.trip_distance:
-                counter = self.visited_list[0]
-                print("weszlo do dodawania punktow")
-                for j in range(3):
-                    if sum(distance_matrix[1:, column_index]) > 0:  #zmienić na 0 i suma column_index
-                        print("dodajemy punkcik")
-                        point_x = sorted(value for value in set(distance_matrix[1:, column_index]) if value != 0)[0]
-                    else:
-                        print("nie dodajemy nic")
-                        self.visited_list.append(distance_matrix[0, column_index])
-                        break
-                    print("punkt_x")
-                    print(point_x)
-                    counter = counter + point_x
+            # if distance_matrix[0, column_index] + distance_matrix[0, column_index] < self.trip_distance:
+            print("weszlo do dodawania punktow")
+            for j in range(3):
+                if sum(distance_matrix[1:, column_index]) > 0:  #zmienić na 0 i suma column_index
+                    print("dodajemy punkcik")
+                    point_x = sorted(value for value in set(distance_matrix[1:, column_index]) if value != 0)[0]
+                else:
+                    print("nie dodajemy nic")
+                    self.visited_list.append(distance_matrix[0, column_index])
+                    break
+                print("punkt_x")
+                print(point_x)
 
-                    old_column_index = column_index
-                    column_index = np.argwhere(distance_matrix[:, column_index] == point_x)[0][0]
+                old_column_index = column_index
+                column_index = np.argwhere(distance_matrix[:, column_index] == point_x)[0][0]
 
-                    print("nowy column_index")
-                    print(column_index)
+                print("nowy column_index")
+                print(column_index)
 
-                    #tu żle tu liczymy od nowego column_index
-                    if counter + distance_matrix[0, column_index] > self.trip_distance or j == 2:
-                        print("za długa trasa")
-                        print(counter + distance_matrix[0, column_index])
-                        self.visited_list.append(distance_matrix[0, old_column_index])
-                        break
+                print("VISITED LIST")
+                print(sum(self.visited_list) + point_x)
+                print("COUNTER")
 
-                    self.visited_list.append(distance_matrix[column_index, old_column_index])
-                    self.indexes_list.append(column_index - 1)
+                if sum(self.visited_list) + point_x + distance_matrix[0, column_index] > self.trip_distance or j == 2:
+                    print("visited list tak")
+                    print("za długa trasa")
+                    self.visited_list.append(distance_matrix[0, old_column_index])
+                    break
 
-                    #to też dziwne
-                    # for k in range(len(self.indexes_list) - 1):
-                    #     distance_matrix[self.indexes_list[k], column_index] = -1
-                    distance_matrix[old_column_index, column_index] = 0
-                    print(distance_matrix)
+                print("point_x" + str(point_x))
+                print("distance_matrix" + str(distance_matrix[column_index, old_column_index]))
 
+                self.visited_list.append(point_x)
+                self.indexes_list.append(column_index - 1)
 
+                #to też dziwne
+                # for k in range(len(self.indexes_list) - 1):
+                #     distance_matrix[self.indexes_list[k], column_index] = -1
+                distance_matrix[old_column_index, column_index] = 0
+                print(distance_matrix)
 
             print("indexes_list po skompletowaniu trasy")
             print(self.indexes_list)
@@ -161,8 +163,6 @@ class RouteService:
             print(self.close_points_list)
             # if len(self.close_points_list) == 1:
             #     break
-
-
 
         print(self.all_place_points)
 

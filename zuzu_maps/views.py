@@ -154,10 +154,10 @@ class TripView(APIView):
         global logger
         try:
         # Pobranie parametrów z zapytania
-            start_lat = request.query_params.get('start_lat')
-            start_lng = request.query_params.get('start_lng')
-            trip_distance = request.query_params.get('trip_distance')
-            place_types = request.query_params.get('type_filter', '').split(',')
+            start_lat = request.query_params.get('start-lat')
+            start_lng = request.query_params.get('start-lng')
+            trip_distance = request.query_params.get('trip-distance')
+            place_types = request.query_params.get('type-filter', '').split(',')
 
             print(place_types)
 

@@ -1,447 +1,310 @@
-/* Ogólny styl strony */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-
 body, html {
+    height: 100%;
+    width: 100%;
+    background-color: #252525;
+    font-family: Candara, sans-serif;
+    overflow: hidden;
+}
+
+#map {
+    position: absolute;
+    height: 100%;
+    width: 100%;
     margin: 0;
     padding: 0;
-    /*font-family: Garamond, serif;*/
-    font-family: Candara, sans-serif;
-    background-color: #252525; /* Kolor tła */
-    height: 100%;
-    /*display: flex;*/
-    /*flex-direction: column;*/
-    overflow: hidden; /* Ukryj nadmiar */
-
+    overflow: hidden;
+    z-index: 5;
 }
 
+.leaflet-control-zoom {
+    display: none !important;
+}
 
-
-/* Pasek na górze */
 #top-bar {
-    background: rgba(25, 25, 25, 0.7); /* Przezroczysty pasek */
-    height: 14%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     position: absolute;
+    display: flex;
     top: 0;
     left: 0;
-    width: calc(100%); /* Zachowanie marginesów */
-    /*margin-left: 0.75cm;*/
-    /*margin-right: 0.75cm;*/
-    z-index: 1000; /* Pasek musi być nad mapą */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Cień dla widoczności */
+    height: 14%;
+    width: 100%;
+    background: rgba(25, 25, 25, 0.7);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    align-items: center;
+    justify-content: center;
+    z-index: 9;
 }
 
-/* Logo */
 #logo {
-    max-height: 80%; /* Dostosowanie rozmiaru logo */
+    max-height: 80%;
     width: auto;
 }
 
-/* Kontener mapy */
-#map {
-    margin: 0;
-    padding: 0;
-    height: 100%; /* Dostosowanie wysokości mapy */
-    width: calc(100%); /* Dodanie marginesów */
-    /*margin-left: 0.75cm;*/
-    /*margin-right: 10cm;*/
-    /*border-radius: 10px; !* Zaokrąglone rogi *!*/
-    /*box-shadow: 0 4px 10px rgba(0, 0, 0, 0.7); !* Cień *!*/
-    /*overflow: hidden;*/
-    position: relative; /* Relatywne pozycjonowanie mapy */
-    overflow: visible;
-    z-index: 900;
-}
-
-/*.leaflet-control-zoom {*/
-/*    position: absolute !important; !* Wymuś nadpisanie *!*/
-/*    bottom: 20px; !* Odstęp od dołu *!*/
-/*    right: 20px; !* Odstęp od prawej *!*/
-/*    !*width: 50px;*!*/
-/*    !*height: 50px;*!*/
-/*    z-index: 2000; !* Upewnij się, że kontrolki są nad mapą *!*/
-/*        pointer-events: auto; !* Umożliw kliknięcia *!*/
-
-/*}*/
-
-/*.leaflet-control-container {*/
-/*    overflow: visible !important; !* Upewnij się, że element nie ukrywa kontrolek *!*/
-/*}*/
-
-form {
-    display: flex;
-    flex-direction: column;
-}
-
-/* Kontener formularza */
 #form-container {
     position: absolute;
+    display: flex;
     bottom: 3%;
     left: 8%;
     height: 80%;
-    /*height: auto;*/
-    background: rgba(25, 25, 25, 0.7); /* Lekko przezroczyste tło */
+    width: 21%;
     padding: 0 15px 0 15px;
-    border-radius: 10px; /* Zaokrąglone rogi */
+    background: rgba(25, 25, 25, 0.7);
+    border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
-    z-index: 1000;
-    max-width: 330px; /* Ustal szerokość formularza */
-    width: 23%; /* Wartość w procentach */
-    overflow: hidden;
-    /*transition: height 1.5s ease-in-out;*/
+    font-family: Candara, sans-serif;
     transform-origin: bottom;
-    display: flex; /* Ustawienie elastycznego układu */
-    flex-direction: column; /* Układ elementów w kolumnie */
-    justify-content: flex-start; /* Elementy wyrównane do góry */
     transition: height 1.5s ease-in-out;
-
+    z-index: 8;
 }
-
-.error-placeholder {
-    margin-top: 5px;
-    height: 1.5rem; /* Wysokość jednej linii tekstu */
-    font-size: 1rem; /* Rozmiar tekstu */
-    color: #EA3C53;
-    text-align: center; /* Wyśrodkowanie tekstu */
-    visibility: hidden; /* Ukryte na początku */
-    font-weight: bold;
-    text-shadow:
-            0 0 5px rgba(0, 0, 0, 0.8),
-            0 0 10px rgba(0, 0, 0, 0.6),
-            0 0 15px rgba(0, 0, 0, 0.4);
-}
-
-/*#form-container.error {*/
-/*    height: 80%; !* Zmniejszenie wysokości *!*/
-/*    bottom: 2%; !* Przesunięcie na dół strony *!*/
-/*}*/
 
 #form-container.collapsed {
-    transition: height 1.5s ease-in-out;
-    height: 8%; /* Zmniejszenie wysokości */
-    width: 23%; /* Zajmuje całą szerokość ekranu */
-    bottom: 3%; /* Przesunięcie na dół strony */
-    left: 8%;
-    position: fixed; /* Pasek na dole */
-    overflow: hidden; /* Ukrywanie zawartości */
-    z-index: 1000;
-    display: flex; /* Wyśrodkowanie tekstu */
-    justify-content: center;
-    align-items: center;
-    background: #333; /* Tło paska */
-    color: #F5A342; /* Kolor tekstu */
-    font-size: 1.2rem; /* Rozmiar tekstu */
-    font-weight: bold;
-    cursor: pointer; /* Kursor wskazujący */
-}
-
-
-#expand-btn {
     position: absolute;
-    background: #333333; /* Tło paska */
-    color: #F5A342; /* Kolor tekstu */
-    border: none;
-    font-size: 1.2rem;
-    /*font-weight: bold;*/
-    border-radius: 10px; /* Dopasowanie do zaokrąglonych rogów formularza */
-    width: 100%; /* Dopasowanie szerokości do formularza */
-    height: 100%; /* Dopasowanie wysokości do formularza */
-    text-align: center;
-    cursor: pointer;
     display: flex;
+    bottom: 3%;
+    left: 8%;
+    height: 8%;
+    width: 21%;
+    background: #333;
+    cursor: pointer;
     justify-content: center;
     align-items: center;
-    padding: 0;
-    font-family: Candara, sans-serif;
+    transition: height 1.5s ease-in-out;
+    overflow: hidden;
+    z-index: 8;
 }
 
-#expand-btn:hover{
-    color: #ffffff; /* Kolor tekstu */
-}
-#expand-btn.hidden {
-    /*display: flex;*/
-    display: none;
-    opacity: 0; /* Ukryj przycisk stopniowo */
-    pointer-events: none; /* Zablokuj interakcję */
-    visibility: hidden; /* Ukrycie elementu */
-    height: 0; /* Wyzerowanie wysokości */
-    width: 0; /* Wyzerowanie szerokości */
-    padding: 0; /* Wyzerowanie marginesów wewnętrznych */
-    margin: 0; /* Wyzerowanie marginesów */
-    overflow: hidden; /* Ukrycie zawartości */
+form label, #start-coords{
+    display: block;
+    margin-bottom: 10px;
+    color: white;
+    font-size: 1.2rem;
 }
 
-form button.hidden{
-    display: none;
+form label:first-of-type {
+    margin-top: 12px;
+    color: #F5A342;
+    font-size: 1.45rem;
+    font-weight: bold;
+    text-align: center;
 }
 
-/* Usuń strzałki (suwak) z pola input type="number" */
+.chosen-coords{
+    display: block;
+    color: #F5A342;
+    text-align: center;
+}
+
+.orange-icon {
+    color: #F5A342;
+    font-size: 37px;
+}
+
+.black-icon{
+     color: #333;
+    font-size: 30px;
+}
+
+form input {
+    display: block;
+    width: 30%;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 5px 15px;
+    background-color: #DDD;
+    border: none;
+    border-radius: 10px;
+    color: black;
+    text-align: center;
+}
+
 input[type="number"] {
-    -moz-appearance: textfield; /* Dla przeglądarek Firefox */
-    -webkit-appearance: none; /* Dla przeglądarek Webkit (Chrome, Safari, Edge) */
-    appearance: none; /* Ogólne ustawienie */
+    -moz-appearance: textfield;
+    -webkit-appearance: none;
+    appearance: none;
 }
 
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
-    margin: 0; /* Usuń margines, aby nie było miejsca po strzałkach */
+    margin: 0;
 }
 
-/* Formularz */
-form label, form button {
-    display: block;
-    width: 100%;
-    /*margin-bottom: 10px;*/
-    color: white; /* Tekst w formularzu w kolorze białym */
-    font-size: 1.2rem;
-}
-
-form label{
-    margin-bottom: 10px;
-}
-
-
-form button {
-    background-color: #F9B166;
-    color: black;
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-family: Garamond, serif;
-    font-size: 1.2rem;
-    margin-top: 10px;
-    margin-bottom: 10px;
-
-}
-
-form button:hover {
-    background-color: #F5A342;
-}
-
-form button.clicked{
-    background-color: #F5A342;
-    cursor: default; /* Zmiana kursora na domyślny */
-
-}
-
-/* Wyróżniony pierwszy napis */
-form label:first-of-type {
-    color: #F5A342; /* Pomarańczowy kolor */
-    font-size: 1.45rem; /* Powiększenie tekstu */
-    font-weight: bold;
-    text-align: center;
-    /*margin-bottom: 8px;*/
-    margin-top: 10px;
-}
-
-form label:nth-of-type(3) {
-    /*margin-top: 15px;*/
-}
-
-/* Pole input dla dystansu */
-form input {
-    display: block; /* Ustawienie bloku dla lepszego zarządzania marginesami */
-    width: 30%; /* Skrócenie szerokości */
-    /*width: auto;*/
-    padding: 5px 15px;
-    border-radius: 10px; /* Zaokrąglone rogi */
-    background-color: #ddd; /* Szare tło */
-    color: black; /* Czarny tekst w polu input */
-    border: none; /* Brak obramowania */
-    /*margin-bottom: 5px;*/
-    margin-left: auto; /* Automatyczne wyśrodkowanie */
-    margin-right: auto; /* Automatyczne wyśrodkowanie */
-    text-align: center; /* Wyśrodkowanie tekstu wewnątrz pola input */
-}
-
-/* Styl dla kontenerów opcji */
 #type-filter-container {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    /*margin-bottom: 10px;*/
-    justify-content: center; /* Wyśrodkowanie poziome */
-    align-items: center; /* Wyśrodkowanie pionowe */
+    justify-content: center;
+    align-items: center;
 }
 
-/* Opcje filtrów */
 .filter-option {
-    background-color: #333;
-    color: white;
     padding: 10px 15px;
+    background-color: #333;
     border-radius: 10px;
+    color: white;
+    font-size: 0.9rem;
     cursor: pointer;
     text-align: center;
-    font-size: 0.9rem;
     transition: all 0.3s;
 }
 
-/* Pierwszy element osobno */
 .filter-option:first-of-type {
-    flex-basis: 53%; /* Zajmuje całą szerokość */
-    text-align: center; /* Wyśrodkowanie tekstu */
+    flex-basis: 53%;
 }
 
-/* Hover efekt */
 .filter-option:hover {
-    background-color: #F9B166; /* Kolor hover */
+    background-color: #F9B166;
 }
 
-/* Wybrany element */
 .filter-option.selected {
-    background-color: #F9B166; /* Kolor dla wybranej opcji */
+    background-color: #F9B166;
     color: black;
     font-weight: bold;
 }
 
-/* Styl dla tekstu 'Click on the map' */
-#start-coords {
-    color: white; /* Biały tekst */
-    text-align: left; /* Wyśrodkowanie tekstu */
-    /*margin-top: 18px;*/
-    font-size: 1.2rem;
-    /*margin-bottom: 18px;*/
+.error-placeholder {
+    height: 1.5rem;
+    margin-top: 4px;
+    color: #EA3C53;
+    font-size: 1rem;
+    font-weight: bold;
+    text-shadow:
+        0 0 5px rgba(0, 0, 0, 0.8),
+        0 0 10px rgba(0, 0, 0, 0.6),
+        0 0 15px rgba(0, 0, 0, 0.4);
+    text-align: center;
+    visibility: hidden;
 }
-/* Styl dla popupów */
+
+#confirm-button {
+    width: 100%;
+    margin-top: 4px;
+    margin-bottom: 12px;
+    padding: 12px;
+    background-color: #F9B166;
+    border: none;
+    border-radius: 5px;
+    color: black;
+    cursor: pointer;
+    font-size: 1rem;
+}
+
+#confirm-button:hover {
+    background-color: #F5A342;
+}
+
+#new-trip-button {
+    position: absolute;
+    display: flex;
+    height: 100%;
+    width: 100%;
+    padding: 0;
+    background: #333333;
+    border: none;
+    border-radius: 10px;
+    color: #F5A342;
+    font-family: Candara, sans-serif;
+    font-size: 1.2rem;
+    text-align: center;
+    cursor: pointer;
+    justify-content: center;
+    align-items: center;
+}
+
+#new-trip-button:hover {
+    color: #ffffff;
+}
+
+#new-trip-button.hidden {
+    display: none;
+    height: 0;
+    width: 0;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+    overflow: hidden;
+}
+
 .popup-container {
+    display: flex;
+    padding: 12px;
     background-color: #333;
     border-radius: 10px;
-    padding: 12px;
-    font-family: "Gill Sans", serif;
-    display: flex;
     flex-direction: column;
-    align-items: center; /* Wyśrodkowanie poziome */
-    justify-content: center; /* Wyśrodkowanie pionowe */
     text-align: center;
+    align-items: center;
+    justify-content: center;
 }
 
 .popup-name {
+    margin-bottom: 10px;
+    color: #F5A342;
+    font-family: Candara, sans-serif;
     font-size: 1.3rem;
     font-weight: bold;
-    color: #F5A342;
-    margin-bottom: 10px;
     text-align: center;
-
 }
 
 .popup-image {
-    max-width: 100%;
-    max-height: 100%;
     width: 230px;
     height: 185px;
-    border-radius: 5px;
     margin-bottom: 10px;
-    border: 1px solid #F5A342; /* Cienka pomarańczowa obramówka */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Lekki cień */
+    border: 1px solid #F5A342;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
 
 .popup-description {
-    color: #fff;
+    width: 260px;
     margin-bottom: 5px;
+    color: #fff;
+    font-family: Candara, sans-serif;
     font-size: 1rem;
     text-align: justify;
-    width: 260px;
 }
-
-/*.custom-popup .leaflet-popup-close-button {*/
-/*    position: absolute; !* Upewnij się, że jest absolutnie pozycjonowany *!*/
-/*    top: 10px; !* Odstęp od góry popupu *!*/
-/*    right: 10px; !* Odstęp od prawej strony *!*/
-/*    color: #F5A342; !* Kolor przycisku *!*/
-/*    font-size: 20px; !* Rozmiar czcionki *!*/
-/*    cursor: pointer; !* Wskaźnik kursora *!*/
-/*    z-index: 3000; !* Upewnij się, że jest nad innymi elementami *!*/
-/*}*/
 
 .leaflet-popup-close-button {
     position: absolute !important;
     top: 10px !important;
     right: 15px !important;
+    background: none !important;
+    border: none !important;
+    color: #F5A342 !important;
     font-size: 15px !important;
     cursor: pointer !important;
-    color: #F5A342 !important;
-    background: none !important; /* Usuń tło */
-    border: none !important; /* Usuń obramowanie */
-    text-shadow: none !important; /* Usuń cień tekstu */
+    text-shadow: none !important;
 }
 
 .leaflet-popup-close-button:hover {
     color: #B6B6B4 !important;
-
-}
-
-/*.leaflet-popup-close-button {*/
-/*    all: unset;*/
-/*    font-size: 25px;*/
-/*    cursor: pointer;*/
-/*    color: #000000;*/
-/*    position: absolute;*/
-/*    top: 5px;*/
-/*    right: 15px;*/
-/*}*/
-
-
-/* Ustawienia dla kontenera popupów w Leaflet */
-.custom-popup .leaflet-popup-content-wrapper {
-    background-color: #333; /* Szare tło */
-    border-radius: 10px; /* Zaokrąglone rogi */
-    font-family: "Gill Sans", serif;
-    padding: 15px;
-    border: 1px solid #F5A342; /* Cienka pomarańczowa obramówka */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5); /* Leunięcie cieni */
-}
-
-/* Usuń wskazówki (tip) */
-.custom-popup .leaflet-popup-tip {
-    background-color: #333; /* Dopasowanie koloru do tła popupu */
-    border: none; /* Usuń dodatkowe obramowania */
-
-}
-
-/* Ustawienia dla ikon Leaflet */
-.leaflet-div-icon {
-    background: transparent !important; /* Przezroczyste tło ikon */
-    border: none !important; /* Usunięcie domyślnej obwódki */
 }
 
 .leaflet-popup-content-wrapper {
-    background-color: #333 !important; /* Szare tło */
-    border: 1px solid #F5A342; /* Pomarańczowa obramówka */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5); /* Usunięcie cieni */
+    background-color: #333 !important;
+    border: 1px solid #F5A342;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
 }
-
-/* Usuń wskazówki (tip) */
-.leaflet-popup-tip {
-    background-color: #333 !important; /* Dopasowanie koloru do tła popupu */
-    border: none !important; /* Usuń dodatkowe obramowania */
-}
-
 
 #elevations-container {
+    position: absolute;
     display: flex;
     flex-direction: column;
-    width: 25%;
-    position: absolute;
-    right: 0;
     bottom: 0;
-    /*height: 100vh;*/
-    overflow-y: auto; /* Dodaj przewijanie, jeśli jest dużo profili */
-    z-index: 1000;
+    right: 0;
+    width: 25%;
+    overflow-y: auto;
+    z-index: 10;
 }
 
 .elevation-item {
     display: flex;
-    flex-direction: row;
-    /*margin-bottom: 10px;*/
 }
 
 .elevation-profile {
@@ -449,23 +312,21 @@ form input {
 }
 
 .elevation-info {
-    width: 25%;
-    padding-left: 5px;
-    color: #ffffff;
-    background: rgba(51, 51, 51, 0.8);
     display: flex;
     flex-direction: column;
+    width: 25%;
+    padding-left: 5px;
+    background: rgba(51, 51, 51, 0.8);
+    border-left: 5px solid rgba(51, 51, 51, 1);
+    color: #FFFFFF;
+    gap: 5px;
     align-items: center;
     justify-content: center;
-    gap: 5px; /* Odstęp między liniami tekstu */
-    border-left: 5px solid rgba(51, 51, 51, 1);
 }
 
 .route {
     font-size: 19px;
     text-align: center;
-    justify-content: center;
-    margin-bottom: 5px;
 }
 
 .distance {
@@ -475,47 +336,7 @@ form input {
 
 .number {
     font-size: 20px;
-}
-
-/* Uniwersalny ekran ładowania */
-.loader-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    font-size: 1.5em;
-    z-index: 1000;
-    display: none; /* Domyślnie ukryty */
-}
-
-/* Loader dla profili wysokościowych tylko po prawej stronie */
-#elevation-loader {
-    left: 75%; /* Odstęp od lewej strony = 80% szerokości */
-    width: 25%; /* Szerokość 20% strony */
-    background: rgba(0, 0, 0, 0.7); /* Ciemniejsze tło */
-    font-size: 1em; /* Mniejszy font */
-}
-
-.loader-spinner {
-    border: 8px solid #f3f3f3;
-    border-top: 8px solid #F5A342;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    animation: spin 1s linear infinite;
-    margin-bottom: 10px;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    text-align: center;
 }
 
 .elevation-item.blurred {
@@ -530,69 +351,87 @@ form input {
     transition: filter 0.3s, opacity 0.3s;
 }
 
-
-/*#error-message-container {*/
-/*    position: fixed;*/
-/*    top: 0;*/
-/*    left: 0;*/
-/*    width: 100%;*/
-/*    height: 100%;*/
-/*    display: flex;*/
-/*    justify-content: center;*/
-/*    align-items: center;*/
-/*    background: rgba(0, 0, 0, 0.7);*/
-/*    z-index: 1000;*/
-/*}*/
-
-#error-message-box {
-    position: fixed; /* Ustawienie pozycji na stałe względem ekranu */
-    top: 50%; /* Pozycjonowanie w pionie */
-    left: 50%; /* Pozycjonowanie w poziomie */
-    transform: translate(-50%, -50%); /* Środkowanie względem własnych wymiarów */
-    justify-content: center;
-    background: #BF4F51;
-    color: #333;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    max-width: 400px;
-    /*height: 20%;*/
-    width: 20%;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    display: flex;
-    flex-direction: column;
-    /*border-color: #F5A342;*/
-    border: 1px solid #ffffff; /* Pomarańczowa obramówka */
-
-    /*box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5); !* Usunięcie cieni *!*/
+#route-loader {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    font-size: 1.5em;
 }
 
-#error-close-btn {
+#elevation-loader {
+    left: 75%;
+    height: 100%;
+    width: 25%;
+    font-size: 1em;
+}
+
+.loader-overlay {
+    position: absolute;
+    display: none;
+    flex-direction: column;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+}
+
+.loader-spinner {
+    height: 50px;
+    width: 50px;
+    margin-bottom: 10px;
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #F5A342;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+#message-container {
+    position: fixed;
+    display: none;
+    flex-direction: column;
+    top: 50%;
+    left: 50%;
+    width: 20%;
+    padding: 20px;
+    background: #BF4F51;
+    border: 1px solid #FFFFFF;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    border-radius: 10px;
+    color: #333;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    transform: translate(-50%, -50%);
+    z-index: 9;
+}
+
+#message-close-button {
     position: absolute;
     top: 5px;
     right: 15px;
+    color: #000000;
     font-size: 25px;
     cursor: pointer;
-    color: #000000;
 }
 
-#error-main {
+#message-main {
     font-size: 1.35rem;
-    /*margin-top: 10px;*/
     padding: 5px;
-    /*background: #9cc222;*/
-    justify-content: center;
 }
 
-#error-base{
-    font-size: 1.25rem;
+#message-below{
     padding: 0 5px 5px 5px;
-    /*background: #4682b4;*/
+    font-size: 1.25rem;
     font-weight: bold;
-    text-align: center;
-}
-
-.leaflet-control-zoom {
-    display: none !important;
 }

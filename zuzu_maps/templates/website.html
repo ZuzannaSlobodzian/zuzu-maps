@@ -1,39 +1,30 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
     <head>
+        {% load static %}
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>ZuzuMaps</title>
-
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-        <link rel="stylesheet" href="https://unpkg.com/@raruto/leaflet-elevation/dist/leaflet-elevation.css" />
-        <link rel="stylesheet" href="{% static 'css/css_website.css' %}">
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-        <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
-
+        <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
+        <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon"/>
         <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
         <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-        <script src="https://unpkg.com/@raruto/leaflet-elevation/dist/leaflet-elevation.min.js"></script>
-        <script src="https://unpkg.com/@mapbox/leaflet-pip@latest/leaflet-pip.js"></script>
     </head>
     <body>
         <div id="map"></div>
-
         <div id="top-bar">
-            <img id="logo" src="{% static 'images/logo.png' %}" alt="Logo">
+            <img id="logo" src="{% static 'images/logo.png' %}" alt="Logo"/>
         </div>
-
         <div id="form-container">
             <form id="route-form">
                 <label>Hej! Gdzie chcesz się dzisiaj wybrać?</label>
-                <p id="start-coords">1. Kliknij na mapę by wybrać punkt startowy:</p>
-                <div class="error-placeholder" id="start-coords-error"></div>
-
-                <label for="trip_distance">2. Przybliżony dystans wycieczki:</label>
-                <input type="number" placeholder="km" id="trip_distance" name="trip_distance" required>
-                <div class="error-placeholder" id="trip-distance-error"></div>
-
+                <p id="start-coords">1. Kliknij na mapę, by wybrać punkt startowy:</p>
+                <div id="start-coords-error" class="error-placeholder"></div>
+                <label for="trip-distance">2. Przybliżony dystans wycieczki:</label>
+                <input id="trip-distance" type="number" placeholder="km" name="trip-distance" required>
+                <div id="trip-distance-error" class="error-placeholder"></div>
                 <label>3. Miejsca, które chcesz odwiedzić:</label>
                 <div id="type-filter-container">
                     <div class="filter-option" data-type="all">wszystkie możliwe</div>
@@ -45,35 +36,25 @@
                     <div class="filter-option" data-type="meadow">łąka</div>
                     <div class="filter-option" data-type="mine">kopalnia</div>
                 </div>
-                <div class="error-placeholder" id="type-filter-error"></div>
-
-                <button type="button" id="confirm-btn">przelicz trasy</button>
+                <div id="type-filter-error" class="error-placeholder"></div>
+                <button id="confirm-button" type="button">przelicz trasy</button>
             </form>
-            <button id="expand-btn" class="hidden">zaplanuj nową wycieczkę</button>
-
+            <button id="new-trip-button" class="hidden" type="button">zaplanuj nową wycieczkę</button>
         </div>
-=        <div id="route-loader" class="loader-overlay">
+        <div id="route-loader" class="loader-overlay">
             <div class="loader-spinner"></div>
             <div>liczymy trasy...</div>
         </div>
-
         <div id="elevation-loader" class="loader-overlay">
             <div class="loader-spinner"></div>
             <div>jeszcze momencik...</div>
         </div>
-
         <div id="elevations-container"></div>
-
-<!--        <div id="error-message-container" style="display: none;">-->
-            <div id="error-message-box" style="display: none">
-                <span id="error-close-btn">&times;</span>
-                <div id="error-main"></div>
-                <div id="error-base"></div>
-
-            </div>
-<!--        </div>-->
-
-        <script src="{% static 'js/script.js' %}"></script>
-
+        <div id="message-container" class="hidden">
+            <span id="message-close-button">&times;</span>
+            <div id="message-main"></div>
+            <div id="message-below"></div>
+        </div>
+        <script src="{% static 'js/website.js' %}"></script>
     </body>
 </html>

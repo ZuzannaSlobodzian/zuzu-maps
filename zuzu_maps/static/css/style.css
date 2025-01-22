@@ -416,15 +416,6 @@ input[type="number"]::-webkit-outer-spin-button {
     z-index: 9;
 }
 
-#message-close-button {
-    position: absolute;
-    top: 5px;
-    right: 15px;
-    color: #000000;
-    font-size: 25px;
-    cursor: pointer;
-}
-
 #message-main {
     font-size: 1.35rem;
     padding: 5px;
@@ -434,4 +425,17 @@ input[type="number"]::-webkit-outer-spin-button {
     padding: 0 5px 5px 5px;
     font-size: 1.25rem;
     font-weight: bold;
+}
+
+#message-close-button {
+    position: absolute;
+    top: 5px;
+    right: 15px;
+    color: #000000;
+    font-size: 25px;
+    cursor: pointer;
+}
+
+#message-close-button:hover{
+    color: #B6B6B4;
 }

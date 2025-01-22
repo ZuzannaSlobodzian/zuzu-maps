@@ -23,25 +23,25 @@ const tripDistanceError = document.getElementById("trip-distance-error");
 const typeFilterError = document.getElementById("type-filter-error");
 const errorMessageBox = document.getElementById("message-container");
 
-const colorPalette = [ '#702963', '#2D680D','#6EAABE', '#A28834','#2E5894' ];
+const colorPalette = ["#702963", "#2D680D", "#6EAABE", "#A28834", "#2E5894"];
 
 const orangeIcon = L.divIcon({
-    html: '<i class="fas fa-map-marker-alt orange-icon"></i>',
-    className: '',
+    html: "<i class='fas fa-map-marker-alt orange-icon'></i>",
+    className: "",
     iconSize: [37, 37],
     iconAnchor: [18.5, 37]
 });
 
 const blackIcon = L.divIcon({
-    html: '<i class="fas fa-map-marker-alt black-icon"></i>',
-    className: '',
+    html: "<i class='fas fa-map-marker-alt black-icon'></i>",
+    className: "",
     iconSize: [30, 30],
     iconAnchor: [15, 30]
 });
 
-const map = L.map('map').setView([50.04410, 19.95824], 12);
+const map = L.map("map").setView([50.04410, 19.95824], 12);
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     maxZoom: 18,
     zoomControl: false,
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -52,7 +52,7 @@ fetch("/static/boundary/krakow_boundary.json")
         .then(data => {
             krakowBoundary = L.geoJSON(data, {
                 style: {
-                    color: '#696880',
+                    color: "#696880",
                     weight: 4,
                     fillOpacity: 0
                 }
@@ -125,11 +125,11 @@ function isAnyOptionSelected() {
 }
 
 function showLoader(loaderId) {
-    document.getElementById(loaderId).style.display = 'flex';
+    document.getElementById(loaderId).style.display = "flex";
 }
 
 function hideLoader(loaderId) {
-    document.getElementById(loaderId).style.display = 'none';
+    document.getElementById(loaderId).style.display = "none";
 }
 
 function removeRoutes(){
@@ -143,11 +143,11 @@ function removeRoutes(){
 function highlightRouteAndProfile(index) {
     profiles.forEach((profile, i) => {
         if (i === index) {
-            profile.classList.add('highlighted');
-            profile.classList.remove('blurred');
+            profile.classList.add("highlighted");
+            profile.classList.remove("blurred");
         } else {
-            profile.classList.add('blurred');
-            profile.classList.remove('highlighted');
+            profile.classList.add("blurred");
+            profile.classList.remove("highlighted");
         }
     });
 
@@ -159,7 +159,7 @@ function highlightRouteAndProfile(index) {
 
 function showAllRoutesAndProfiles() {
         profiles.forEach(profile => {
-            profile.classList.remove('blurred', 'highlighted');
+            profile.classList.remove("blurred", "highlighted");
         });
 
     borders.forEach(border => border.addTo(map));
@@ -171,12 +171,12 @@ function showAllRoutesAndProfiles() {
 
 function setupInteractivity() {
     profiles.forEach((profile, index) => {
-        profile.addEventListener('click', () => {
+        profile.addEventListener("click", () => {
             highlightRouteAndProfile(index);
         });
     });
 
-    map.on('click', () => {
+    map.on("click", () => {
         showAllRoutesAndProfiles();
     });
 }
@@ -194,7 +194,7 @@ function resetAll() {
     setTrip = true;
 }
 
-map.on('click', function (e) {
+map.on("click", function (e) {
     if (!setTrip) {
         return;
     }
@@ -259,15 +259,15 @@ tripDistance.addEventListener("blur", function (e) {
 });
 
 filterOptions.forEach(option => {
-    option.addEventListener('click', function () {
-        const type = this.getAttribute('data-type');
+    option.addEventListener("click", function () {
+        const type = this.getAttribute("data-type");
 
         if (selectedFilters.includes(type)) {
             selectedFilters = selectedFilters.filter(item => item !== type);
-            this.classList.remove('selected');
+            this.classList.remove("selected");
         } else {
             selectedFilters.push(type);
-            this.classList.add('selected');
+            this.classList.add("selected");
 
             typeFilterError.textContent = "";
             typeFilterError.style.visibility = "hidden";
@@ -320,7 +320,7 @@ confirmButton.addEventListener("click", function () {
 newTripButton.addEventListener("click", function () {
     if (abortController) {
         abortController.abort();
-        hideLoader('elevation-loader');
+        hideLoader("elevation-loader");
     }
 
     newTripButton.classList.add("hidden");
@@ -335,7 +335,7 @@ newTripButton.addEventListener("click", function () {
 });
 
 async function loadRoute(startCoords, tripDistance, typeFilter) {
-    showLoader('route-loader');
+    showLoader("route-loader");
     setTrip = false;
 
     abortController = new AbortController();
@@ -356,7 +356,7 @@ async function loadRoute(startCoords, tripDistance, typeFilter) {
             const latLngs = route.map(point => [point[0], point[1]]);
             const color = colorPalette[index];
 
-            const borderPolyline = L.polyline(latLngs, {color: 'black', weight: 6, opacity: 0.7});
+            const borderPolyline = L.polyline(latLngs, {color: "#000000", weight: 6, opacity: 0.7});
             const polyline = L.polyline(latLngs, {color: color, weight: 4, interactive: true, opacity: 1});
 
             borderPolyline.addTo(map);
@@ -377,13 +377,13 @@ async function loadRoute(startCoords, tripDistance, typeFilter) {
                 let marker = L.marker([place.latitude, place.longitude], {icon: blackIcon}).bindPopup(`
                     <div class="popup-container">
                         <div class="popup-name">${place.name}</div>
-                        <img src="/static/images/${place.image}.jpg" alt="${place.name} " class="popup-image">
+                        <img src="/static/images/${place.image}.jpg" alt="${place.name}" class="popup-image">
                         <div class="popup-description">${place.description}</div>
                     </div>
                 `);
 
-                document.addEventListener('click', function (e) {
-                    if (e.target && e.target.id === 'custom-close-btn') {
+                document.addEventListener("click", function (e) {
+                    if (e.target && e.target.id === "custom-close-btn") {
                         map.closePopup();
                     }
                 });
@@ -394,10 +394,10 @@ async function loadRoute(startCoords, tripDistance, typeFilter) {
             markers.push(route_markers);
         });
 
-        hideLoader('route-loader');
-        showLoader('elevation-loader');
+        hideLoader("route-loader");
+        showLoader("elevation-loader");
 
-        const elevationResponse = await fetch(`/zuzu_maps/trip`, {
+        const elevationResponse = await fetch("/zuzu_maps/trip", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -447,16 +447,16 @@ async function loadRoute(startCoords, tripDistance, typeFilter) {
             Plotly.newPlot(elevationDiv.id, [{
                 x: distances,
                 y: elevations,
-                type: 'scatter',
-                mode: 'lines',
+                type: "scatter",
+                mode: "lines",
                 line: {
-                    color: '#F5A342',
-                    shape: 'spline',
+                    color: "#F5A342",
+                    shape: "spline",
                     smoothing: 50,
                     width: 2
                 },
-                fill: 'tozeroy',
-                fillcolor: 'rgba(249, 177, 102, 0.5)'
+                fill: "tozeroy",
+                fillcolor: "rgba(249, 177, 102, 0.5)"
             }], {
                 margin: {
                     t: 10,
@@ -497,18 +497,19 @@ async function loadRoute(startCoords, tripDistance, typeFilter) {
             });
         });
 
-        profiles = document.querySelectorAll('.elevation-item');
+        profiles = document.querySelectorAll(".elevation-item");
 
-        hideLoader('elevation-loader');
+        hideLoader("elevation-loader");
         setupInteractivity();
 
     } catch (error) {
+
         if (abortController) {
             abortController.abort();
         }
-        hideLoader('route-loader');
+        hideLoader("route-loader");
 
-        if(error.message == "444") {
+        if(["444", "404", "503"].includes(error.message)) {
             setTimeout(() => {
                 const errorMessageContainer = document.getElementById("message-container");
                 const errorMain = document.getElementById("message-main");
@@ -519,7 +520,16 @@ async function loadRoute(startCoords, tripDistance, typeFilter) {
                 z tej kategorii
                <br>w podanym zasięgu,</br>
             `;
-                errorBase.innerHTML = `zmień parametry wycieczki.`;
+                errorBase.innerHTML = "zmień parametry wycieczki.";
+
+                if (error.message === "404"){
+                    errorMain.innerHTML = "Nieznaleziono klucza API do GraphHopper,"
+                    errorBase.innerHTML = "uzupełnij dane w pliku credentials/api_key.txt"
+                } else if(error.message === "503"){
+                    errorMain.innerHTML = "Błąd połączenia z GrapHopper,"
+                    errorBase.innerHTML = "spróbuj jeszcze raz"
+                }
+
                 errorMessageContainer.style.display = "flex";
 
                 errorCloseBtn.addEventListener("click", () => {
@@ -531,5 +541,6 @@ async function loadRoute(startCoords, tripDistance, typeFilter) {
                 newTripButton.click();
             }, 2000);
         }
+
     }
 }

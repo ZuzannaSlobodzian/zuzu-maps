@@ -16,9 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.http import HttpResponseRedirect
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('zuzu_maps/', include('zuzu_maps.urls')),
+    path('', lambda request: HttpResponseRedirect('/zuzu_maps/')),
+    path('zuzu_maps/', include('zuzu_maps.urls'))
 ]

@@ -1,67 +1,60 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZuzuMaps</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://unpkg.com/@raruto/leaflet-elevation/dist/leaflet-elevation.css" />
-    <link rel="stylesheet" href="{% static 'css/css_website.css' %}">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon">
-</head>
-<body>
-    <!-- Pasek na górze -->
-    <div id="top-bar">
-        <img id="logo" src="{% static 'images/logo.png' %}" alt="Logo">
-    </div>
-<div id="elevations-container"></div>
-
-    <!-- Formularz -->
-    <div id="form-container">
-        <form id="route-form">
-            <label>Hej! Gdzie chcesz się dzisiaj wybrać?</label>
-            <p id="start-coords">1. Kliknij na mapę by wybrać punkt startowy:</p>
-            <label for="trip_distance">2. Przybliżony dystans wycieczki:</label>
-            <input type="number" placeholder="km" id="trip_distance" name="trip_distance" required>
-            <label>3. Miejsca, które chcesz odwiedzić:</label>
-            <div id="type-filter-container">
-                <div class="filter-option" data-type="all">wszystkie możliwe</div>
-                <div class="filter-option" data-type="viewpoint">punkt widokowy</div>
-                <div class="filter-option" data-type="park">park</div>
-                <div class="filter-option" data-type="lake">jezioro</div>
-                <div class="filter-option" data-type="architecture">architektura</div>
-                <div class="filter-option" data-type="forest">las</div>
-                <div class="filter-option" data-type="meadow">łąka</div>
-                <div class="filter-option" data-type="mine">kopalnia</div>
-            </div>
-            <button type="button" id="confirm-btn">przelicz trasy</button>
-        </form>
-
-    </div>
-<!-- Loader 1: Dla tras -->
-<div id="route-loader" class="loader-overlay">
-    <div class="loader-spinner"></div>
-    <div>liczymy trasy...</div>
-</div>
-
-<!-- Loader 2: Dla profili wysokościowych -->
-<div id="elevation-loader" class="loader-overlay">
-    <div class="loader-spinner"></div>
-    <div>jeszcze momencik...</div>
-</div>
-
-
-
-    <!-- Mapa -->
-    <div id="map"></div>
-
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <script src="https://unpkg.com/@raruto/leaflet-elevation/dist/leaflet-elevation.min.js"></script>
-    <script src="{% static 'js/script.js' %}"></script>
-
-
-</body>
+    <head>
+        {% load static %}
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>ZuzuMaps</title>
+        <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"/>
+        <link rel="icon" href="{% static 'images/favicon.ico' %}" type="image/x-icon"/>
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    </head>
+    <body>
+        <div id="map"></div>
+        <div id="top-bar">
+            <img id="logo" src="{% static 'images/logo.png' %}" alt="Logo"/>
+        </div>
+        <div id="form-container">
+            <form id="route-form">
+                <label>Hej! Gdzie chcesz się dzisiaj wybrać?</label>
+                <p id="start-coords">1. Kliknij na mapę, by wybrać punkt startowy:</p>
+                <div id="start-coords-error" class="error-placeholder"></div>
+                <label for="trip-distance">2. Przybliżony dystans wycieczki:</label>
+                <input id="trip-distance" type="number" placeholder="km" name="trip-distance" required>
+                <div id="trip-distance-error" class="error-placeholder"></div>
+                <label>3. Miejsca, które chcesz odwiedzić:</label>
+                <div id="type-filter-container">
+                    <div class="filter-option" data-type="all">wszystkie możliwe</div>
+                    <div class="filter-option" data-type="viewpoint">punkt widokowy</div>
+                    <div class="filter-option" data-type="park">park</div>
+                    <div class="filter-option" data-type="lake">jezioro</div>
+                    <div class="filter-option" data-type="architecture">architektura</div>
+                    <div class="filter-option" data-type="forest">las</div>
+                    <div class="filter-option" data-type="meadow">łąka</div>
+                    <div class="filter-option" data-type="mine">kopalnia</div>
+                </div>
+                <div id="type-filter-error" class="error-placeholder"></div>
+                <button id="confirm-button" type="button">przelicz trasy</button>
+            </form>
+            <button id="new-trip-button" class="hidden" type="button">zaplanuj nową wycieczkę</button>
+        </div>
+        <div id="route-loader" class="loader-overlay">
+            <div class="loader-spinner"></div>
+            <div>liczymy trasy...</div>
+        </div>
+        <div id="elevation-loader" class="loader-overlay">
+            <div class="loader-spinner"></div>
+            <div>jeszcze momencik...</div>
+        </div>
+        <div id="elevations-container"></div>
+        <div id="message-container" class="hidden">
+            <span id="message-close-button">&times;</span>
+            <div id="message-main"></div>
+            <div id="message-below"></div>
+        </div>
+        <script src="{% static 'js/website.js' %}"></script>
+    </body>
 </html>
